@@ -3,12 +3,7 @@ dist/
 test-results/
 playwright-report/
 playwright/.cache/
-*.log
-.env
-.env.local
-.DS_Store
 coverage/
-*.tsbuildinfo
-.prettiercache
-.eslintcache
+*.log
+package-lock.json
 
