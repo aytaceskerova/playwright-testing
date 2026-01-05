@@ -29,8 +29,6 @@ export default defineConfig({
     trace: 'on-first-retry',
     /* Screenshot on failure */
     screenshot: 'only-on-failure',
-    /* Video on failure */
-    video: 'retain-on-failure',
   },
 
   /* Configure projects for major browsers */
