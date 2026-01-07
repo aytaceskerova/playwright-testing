@@ -44,20 +44,12 @@ export class RegistrationPage {
   async clickSignInLink(): Promise<void> {
     await this.signInLink.waitFor({ state: 'visible', timeout: 10000 });
     await this.signInLink.click();
-<<<<<<< HEAD
     await this.page.waitForLoadState('domcontentloaded');
-=======
-    await this.page.waitForLoadState('networkidle');
->>>>>>> master
   }
 
   async clickRegistrationLink(): Promise<void> {
     await this.registrationLink.click();
-<<<<<<< HEAD
     await this.page.waitForLoadState('domcontentloaded');
-=======
-    await this.page.waitForLoadState('networkidle');
->>>>>>> master
   }
 
   async fillFirstName(firstName: string): Promise<void> {
@@ -97,15 +89,9 @@ export class RegistrationPage {
 
   async clickSubmitButton(): Promise<void> {
     await this.page.keyboard.press('Escape');
-<<<<<<< HEAD
     await this.page.waitForTimeout(200);
     await this.submitButton.click();
     await this.page.waitForLoadState('domcontentloaded');
-=======
-    await this.page.waitForTimeout(200); // Small wait to ensure date picker is closed
-    await this.submitButton.click();
-    await this.page.waitForLoadState('networkidle');
->>>>>>> master
   }
 
   async isSubmitButtonActive(): Promise<boolean> {
@@ -113,7 +99,6 @@ export class RegistrationPage {
   }
 
   async isSubmitButtonInactive(): Promise<boolean> {
-<<<<<<< HEAD
     try {
       await this.submitButton.waitFor({ state: 'visible', timeout: 5000 });
       const isDisabled = await this.submitButton.getAttribute('disabled');
@@ -126,11 +111,6 @@ export class RegistrationPage {
     } catch {
       return true;
     }
-=======
-    const isDisabled = await this.submitButton.getAttribute('disabled');
-    const isEnabled = await this.submitButton.isEnabled();
-    return isDisabled !== null || !isEnabled;
->>>>>>> master
   }
 
   async isSignInButtonActive(): Promise<boolean> {
@@ -172,7 +152,3 @@ export class RegistrationPage {
     }
   }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> master
