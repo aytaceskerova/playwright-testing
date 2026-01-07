@@ -12,7 +12,7 @@ export class SignInPage {
     this.page = page;
     this.registrationLink = page.locator('a', { hasText: 'Registration' });
     this.signInLink = page.locator('a', { hasText: 'Sing in' });
-    // Button text is "Sign in" (with 'g'), not "Sing in"
+    // Button label is "Sign in" (with 'g')
     this.signInButton = page.locator('button', { hasText: 'Sign in' });
     this.emailInput = page.locator('input[name="email"], input[type="email"], input[placeholder*="Email" i], input[id*="email" i]').first();
     this.passwordInput = page.locator('input[name="password"], input[type="password"]').first();
@@ -71,6 +71,13 @@ export class SignInPage {
     const email = await this.emailInput.inputValue();
     const password = await this.passwordInput.inputValue();
     return email === '' && password === '';
+  }
+
+  async signIn(email: string, password: string): Promise<void> {
+    await this.fillEmail(email);
+    await this.fillPassword(password);
+    await this.signInButton.click();
+    await this.page.waitForLoadState('networkidle');
   }
 }
 
