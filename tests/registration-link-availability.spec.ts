@@ -8,48 +8,33 @@ test.describe('AQAPRACT-507: Registration ↔ Sing in links', () => {
     await signInPage.goto();
 
     await signInPage.clickRegistrationLink();
-
     await expect(page).toHaveURL(/.*registration/);
 
     const registrationPage = new RegistrationPage(page);
     await registrationPage.signInLink.waitFor({ state: 'visible', timeout: 10000 });
-    const signInLinkText = await registrationPage.signInLink.textContent();
-    expect(signInLinkText?.trim().toLowerCase()).toContain('sing in');
-
-    const areFieldsEmpty = await registrationPage.areFieldsEmpty();
-    expect(areFieldsEmpty).toBe(true);
-
-    const isSubmitVisible = await registrationPage.submitButton.isVisible();
-    expect(isSubmitVisible).toBe(true);
+    await registrationPage.submitButton.waitFor({ state: 'visible', timeout: 10000 });
     
-    const isSubmitInactive = await registrationPage.isSubmitButtonInactive();
-    if (isSubmitInactive) {
-      expect(isSubmitInactive).toBe(true);
+    expect(await registrationPage.signInLink.textContent()).toContain('Sing in');
+    expect(await registrationPage.areFieldsEmpty()).toBe(true);
+    expect(await registrationPage.submitButton.isVisible()).toBe(true);
+    
+    const isInactive = await registrationPage.isSubmitButtonInactive();
+    if (!isInactive) {
+      expect(await registrationPage.areFieldsEmpty()).toBe(true);
     } else {
-      const isEnabled = await registrationPage.submitButton.isEnabled();
-      expect(isEnabled).toBe(true);
+      expect(isInactive).toBe(true);
     }
 
-    const signInLinkExists = await registrationPage.signInLink.isVisible();
-    expect(signInLinkExists).toBe(true);
-
     await registrationPage.clickSignInLink();
-
     await expect(page).toHaveURL(/.*login/);
 
-    const registrationLinkText = await signInPage.registrationLink.textContent();
-    expect(registrationLinkText?.trim().toLowerCase()).toContain('registration');
-
-    const isSignInButtonVisible = await signInPage.signInButton.isVisible();
-    expect(isSignInButtonVisible).toBe(true);
-    
-    const areSignInFieldsEmpty = await signInPage.areFieldsEmpty();
-    expect(areSignInFieldsEmpty).toBe(true);
+    expect(await signInPage.registrationLink.textContent()).toContain('Registration');
+    expect(await signInPage.signInButton.isVisible()).toBe(true);
+    expect(await signInPage.areFieldsEmpty()).toBe(true);
     
     const isSignInButtonInactive = await signInPage.isSignInButtonInactive();
     if (!isSignInButtonInactive) {
-      const isVisible = await signInPage.signInButton.isVisible();
-      expect(isVisible).toBe(true);
+      expect(await signInPage.areFieldsEmpty()).toBe(true);
     } else {
       expect(isSignInButtonInactive).toBe(true);
     }
