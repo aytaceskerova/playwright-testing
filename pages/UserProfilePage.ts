@@ -1,11 +1,11 @@
-import { Page, Locator } from '@playwright/test';
+import { Locator } from '@playwright/test';
+import { BasePage } from './BasePage';
 
-export class UserProfilePage {
-  readonly page: Page;
+export class UserProfilePage extends BasePage {
   readonly signOut: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(page: BasePage['page']) {
+    super(page);
     this.signOut = page.getByText(/sign out/i).first();
   }
 
@@ -16,7 +16,6 @@ export class UserProfilePage {
 
   async waitForPageLoad(): Promise<void> {
     await this.page.waitForLoadState('networkidle');
-    await this.signOut.waitFor({ state: 'visible', timeout: 10000 }).catch(() => {});
+    await this.signOut.waitFor({ state: 'visible' }).catch(() => {});
   }
 }
-
