@@ -25,12 +25,12 @@ export class SignInPage {
 
   async clickRegistrationLink(): Promise<void> {
     await this.registrationLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async clickSignInLink(): Promise<void> {
     await this.signInLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async isSignInButtonActive(): Promise<boolean> {
@@ -77,7 +77,7 @@ export class SignInPage {
     await this.fillEmail(email);
     await this.fillPassword(password);
     await this.signInButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 }
 

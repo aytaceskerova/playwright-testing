@@ -44,12 +44,12 @@ export class RegistrationPage {
   async clickSignInLink(): Promise<void> {
     await this.signInLink.waitFor({ state: 'visible', timeout: 10000 });
     await this.signInLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async clickRegistrationLink(): Promise<void> {
     await this.registrationLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async fillFirstName(firstName: string): Promise<void> {
@@ -89,9 +89,9 @@ export class RegistrationPage {
 
   async clickSubmitButton(): Promise<void> {
     await this.page.keyboard.press('Escape');
-    await this.page.waitForTimeout(200); // Small wait to ensure date picker is closed
+    await this.page.waitForTimeout(200);
     await this.submitButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async isSubmitButtonActive(): Promise<boolean> {
