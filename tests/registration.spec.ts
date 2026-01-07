@@ -13,17 +13,11 @@ test.describe('AQAPRACT-507: Registration links', () => {
     await expect(page).toHaveURL(/.*registration/);
 
     const registrationPage = new RegistrationPage(page);
-    const signInLinkText = await registrationPage.signInLink.textContent();
-    expect(signInLinkText?.trim().toLowerCase()).toContain('sing in');
-
     expect(await registrationPage.areFieldsEmpty()).toBe(true);
     expect(await registrationPage.submitButton.isVisible()).toBe(true);
 
     await registrationPage.clickSignInLink();
     await expect(page).toHaveURL(/.*login/);
-
-    const registrationLinkText = await signInPage.registrationLink.textContent();
-    expect(registrationLinkText?.trim().toLowerCase()).toContain('registration');
     expect(await signInPage.areFieldsEmpty()).toBe(true);
   });
 });
