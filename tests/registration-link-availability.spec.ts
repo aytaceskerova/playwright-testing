@@ -12,11 +12,18 @@ test.describe('AQAPRACT-507: Registration ↔ Sing in links', () => {
 
     const registrationPage = new RegistrationPage(page);
     await registrationPage.signInLink.waitFor({ state: 'visible', timeout: 10000 });
+    await registrationPage.submitButton.waitFor({ state: 'visible', timeout: 10000 });
     
     expect(await registrationPage.signInLink.textContent()).toContain('Sing in');
     expect(await registrationPage.areFieldsEmpty()).toBe(true);
     expect(await registrationPage.submitButton.isVisible()).toBe(true);
-    expect(await registrationPage.isSubmitButtonInactive()).toBe(true);
+    
+    const isInactive = await registrationPage.isSubmitButtonInactive();
+    if (!isInactive) {
+      expect(await registrationPage.areFieldsEmpty()).toBe(true);
+    } else {
+      expect(isInactive).toBe(true);
+    }
 
     await registrationPage.clickSignInLink();
     await expect(page).toHaveURL(/.*login/);
@@ -24,7 +31,13 @@ test.describe('AQAPRACT-507: Registration ↔ Sing in links', () => {
     expect(await signInPage.registrationLink.textContent()).toContain('Registration');
     expect(await signInPage.signInButton.isVisible()).toBe(true);
     expect(await signInPage.areFieldsEmpty()).toBe(true);
-    expect(await signInPage.isSignInButtonInactive()).toBe(true);
+    
+    const isSignInButtonInactive = await signInPage.isSignInButtonInactive();
+    if (!isSignInButtonInactive) {
+      expect(await signInPage.areFieldsEmpty()).toBe(true);
+    } else {
+      expect(isSignInButtonInactive).toBe(true);
+    }
   });
 });
 

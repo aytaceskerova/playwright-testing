@@ -12,7 +12,6 @@ export class SignInPage {
     this.page = page;
     this.registrationLink = page.locator('a', { hasText: 'Registration' });
     this.signInLink = page.locator('a', { hasText: 'Sing in' });
-    // Button text is "Sign in" (with 'g'), not "Sing in"
     this.signInButton = page.locator('button', { hasText: 'Sign in' });
     this.emailInput = page.locator('input[name="email"], input[type="email"], input[placeholder*="Email" i], input[id*="email" i]').first();
     this.passwordInput = page.locator('input[name="password"], input[type="password"]').first();
@@ -43,10 +42,13 @@ export class SignInPage {
     try {
       await this.signInButton.waitFor({ state: 'visible', timeout: 5000 });
       const isDisabled = await this.signInButton.getAttribute('disabled');
+      const ariaDisabled = await this.signInButton.getAttribute('aria-disabled');
       const isEnabled = await this.signInButton.isEnabled();
-      return isDisabled !== null || !isEnabled;
+      const hasDisabledClass = await this.signInButton.evaluate((el) => 
+        el.classList.contains('disabled') || el.classList.contains('Mui-disabled')
+      );
+      return isDisabled !== null || ariaDisabled === 'true' || hasDisabledClass || !isEnabled;
     } catch {
-      // If button not found, consider it inactive
       return true;
     }
   }

@@ -99,9 +99,18 @@ export class RegistrationPage {
   }
 
   async isSubmitButtonInactive(): Promise<boolean> {
-    const isDisabled = await this.submitButton.getAttribute('disabled');
-    const isEnabled = await this.submitButton.isEnabled();
-    return isDisabled !== null || !isEnabled;
+    try {
+      await this.submitButton.waitFor({ state: 'visible', timeout: 5000 });
+      const isDisabled = await this.submitButton.getAttribute('disabled');
+      const ariaDisabled = await this.submitButton.getAttribute('aria-disabled');
+      const isEnabled = await this.submitButton.isEnabled();
+      const hasDisabledClass = await this.submitButton.evaluate((el) => 
+        el.classList.contains('disabled') || el.classList.contains('Mui-disabled')
+      );
+      return isDisabled !== null || ariaDisabled === 'true' || hasDisabledClass || !isEnabled;
+    } catch {
+      return true;
+    }
   }
 
   async isSignInButtonActive(): Promise<boolean> {
