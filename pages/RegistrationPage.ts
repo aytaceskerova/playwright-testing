@@ -1,16 +1,8 @@
-import { Page, Locator } from '@playwright/test';
+import { Locator } from '@playwright/test';
+import { BasePage } from './BasePage';
+import { RegistrationData } from '../types/registration';
 
-export interface RegistrationData {
-  firstName: string;
-  lastName: string;
-  dateOfBirth: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-export class RegistrationPage {
-  readonly page: Page;
+export class RegistrationPage extends BasePage {
   readonly signInLink: Locator;
   readonly registrationLink: Locator;
   readonly firstNameInput: Locator;
@@ -22,34 +14,36 @@ export class RegistrationPage {
   readonly submitButton: Locator;
   readonly signInButton: Locator;
 
-  constructor(page: Page) {
-    this.page = page;
+  constructor(page: BasePage['page']) {
+    super(page);
     this.signInLink = page.locator('a', { hasText: 'Sing in' });
     this.registrationLink = page.locator('a', { hasText: 'Registration' });
-    this.firstNameInput = page.locator('input[name="firstName"], input[placeholder*="First name" i], input[id*="firstName" i]').first();
-    this.lastNameInput = page.locator('input[name="lastName"], input[placeholder*="Last name" i], input[id*="lastName" i]').first();
-    this.dateOfBirthInput = page.locator('input[name="dateOfBirth"], input[type="date"], input[placeholder*="Date of birth" i], input[id*="dateOfBirth" i]').first();
-    this.emailInput = page.locator('input[name="email"], input[type="email"], input[placeholder*="Email" i], input[id*="email" i]').first();
-    this.passwordInput = page.locator('input[name="password"], input[type="password"]').first();
-    this.confirmPasswordInput = page.locator('input[name="confirmPassword"], input[placeholder*="Confirm password" i], input[id*="confirmPassword" i]').first();
-    this.submitButton = page.locator('button[type="submit"], button', { hasText: 'Submit' }).first();
+    this.firstNameInput = page.locator('input[name="firstName"]');
+    this.lastNameInput = page.locator('input[name="lastName"]');
+    this.dateOfBirthInput = page.locator('input[name="dateOfBirth"]');
+    this.emailInput = page.locator('input[name="email"]');
+    this.passwordInput = page.locator('input[name="password"]');
+    this.confirmPasswordInput = page.getByLabel(/confirm password/i).or(page.locator('input[name="confirmPassword"]')).first();
+    this.submitButton = page.locator('button[type="submit"]');
     this.signInButton = page.locator('button', { hasText: 'Sing in' });
   }
 
+<<<<<<< HEAD
   async goto(): Promise<void> {
     await this.page.goto('/registration');
     await this.page.waitForLoadState('networkidle');
+=======
+  async openRegistrationPage(): Promise<void> {
+    await this.goto('/registration');
+>>>>>>> a4eaf3b (Refactor registration tests: add BasePage, move interface to types, simplify locators and remove unnecessary waiters)
   }
 
   async clickSignInLink(): Promise<void> {
-    await this.signInLink.waitFor({ state: 'visible', timeout: 10000 });
     await this.signInLink.click();
-    await this.page.waitForLoadState('networkidle');
   }
 
   async clickRegistrationLink(): Promise<void> {
     await this.registrationLink.click();
-    await this.page.waitForLoadState('networkidle');
   }
 
   async fillFirstName(firstName: string): Promise<void> {
@@ -89,9 +83,7 @@ export class RegistrationPage {
 
   async clickSubmitButton(): Promise<void> {
     await this.page.keyboard.press('Escape');
-    await this.page.waitForTimeout(200); // Small wait to ensure date picker is closed
     await this.submitButton.click();
-    await this.page.waitForLoadState('networkidle');
   }
 
   async isSubmitButtonActive(): Promise<boolean> {
@@ -109,21 +101,25 @@ export class RegistrationPage {
   }
 
   async areFieldsEmpty(): Promise<boolean> {
-    const firstName = await this.firstNameInput.inputValue();
-    const lastName = await this.lastNameInput.inputValue();
-    const dateOfBirth = await this.dateOfBirthInput.inputValue();
-    const email = await this.emailInput.inputValue();
-    const password = await this.passwordInput.inputValue();
-    const confirmPassword = await this.confirmPasswordInput.inputValue();
+    try {
+      const firstName = await this.firstNameInput.inputValue();
+      const lastName = await this.lastNameInput.inputValue();
+      const dateOfBirth = await this.dateOfBirthInput.inputValue();
+      const email = await this.emailInput.inputValue();
+      const password = await this.passwordInput.inputValue();
+      const confirmPassword = await this.confirmPasswordInput.inputValue().catch(() => '');
 
-    return (
-      firstName === '' &&
-      lastName === '' &&
-      dateOfBirth === '' &&
-      email === '' &&
-      password === '' &&
-      confirmPassword === ''
-    );
+      return (
+        firstName === '' &&
+        lastName === '' &&
+        dateOfBirth === '' &&
+        email === '' &&
+        password === '' &&
+        confirmPassword === ''
+      );
+    } catch {
+      return false;
+    }
   }
 
   async getFieldValue(fieldName: keyof RegistrationData): Promise<string> {
@@ -139,8 +135,7 @@ export class RegistrationPage {
       case 'password':
         return await this.passwordInput.inputValue();
       case 'confirmPassword':
-        return await this.confirmPasswordInput.inputValue();
+        return await this.confirmPasswordInput.inputValue().catch(() => '');
     }
   }
 }
-
