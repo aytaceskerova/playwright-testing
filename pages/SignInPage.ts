@@ -33,7 +33,6 @@ export class SignInPage {
   }
 
   async isSignInButtonActive(): Promise<boolean> {
-    // Wait for button to be visible first
     await this.signInButton.waitFor({ state: 'visible', timeout: 5000 }).catch(() => {});
     return await this.signInButton.isEnabled();
   }
