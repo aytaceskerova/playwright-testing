@@ -40,4 +40,3 @@ test.describe('AQAPRACT-507: Registration ↔ Sing in links', () => {
     }
   });
 });
-

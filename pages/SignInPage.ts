@@ -81,4 +81,3 @@ export class SignInPage {
     await this.page.waitForLoadState('domcontentloaded');
   }
 }
-
