@@ -4,8 +4,8 @@ import { RegistrationPage } from '../pages/RegistrationPage';
 import { UserProfilePage } from '../pages/UserProfilePage';
 import { RegistrationData } from '../types/registration';
 
-test.describe('AQAPRACT-507: Registration links', () => {
-  test('switches between pages via links', async ({ page }) => {
+test.describe('Registration tests', () => {
+  test('AQAPRACT-507: switches between pages via links', async ({ page }) => {
     const signInPage = new SignInPage(page);
     await signInPage.openSignInPage();
     await signInPage.clickRegistrationLink();
@@ -20,10 +20,8 @@ test.describe('AQAPRACT-507: Registration links', () => {
     await expect(page).toHaveURL(/.*login/);
     expect(await signInPage.areFieldsEmpty()).toBe(true);
   });
-});
 
-test.describe('AQAPRACT-508: Successful registration', () => {
-  test('registers with valid data', async ({ page }) => {
+  test('AQAPRACT-508: registers with valid data', async ({ page }) => {
     test.setTimeout(60_000);
     const registrationPage = new RegistrationPage(page);
     await registrationPage.openRegistrationPage();
