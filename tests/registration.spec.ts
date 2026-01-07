@@ -5,25 +5,31 @@ import { UserProfilePage } from '../pages/UserProfilePage';
 import { RegistrationData } from '../types/registration';
 
 test.describe('Registration tests', () => {
-  test('AQAPRACT-507: switches between pages via links', async ({ page }) => {
-    const signInPage = new SignInPage(page);
+  let signInPage: SignInPage;
+  let registrationPage: RegistrationPage;
+  let userProfilePage: UserProfilePage;
+
+  test.beforeEach(async ({ page }) => {
+    signInPage = new SignInPage(page);
+    registrationPage = new RegistrationPage(page);
+    userProfilePage = new UserProfilePage(page);
+  });
+
+  test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page }) => {
     await signInPage.openSignInPage();
     await signInPage.clickRegistrationLink();
 
     await expect(page).toHaveURL(/.*registration/);
 
-    const registrationPage = new RegistrationPage(page);
     expect(await registrationPage.areFieldsEmpty()).toBe(true);
-    expect(await registrationPage.submitButton.isVisible()).toBe(true);
+    await expect(registrationPage.submitButton).toBeVisible();
 
     await registrationPage.clickSignInLink();
     await expect(page).toHaveURL(/.*login/);
     expect(await signInPage.areFieldsEmpty()).toBe(true);
   });
 
-  test('AQAPRACT-508: registers with valid data', async ({ page }) => {
-    test.setTimeout(60_000);
-    const registrationPage = new RegistrationPage(page);
+  test('[AQAPRACT-508] registers with valid data', async ({ page }) => {
     await registrationPage.openRegistrationPage();
 
     const data: RegistrationData = {
@@ -43,17 +49,15 @@ test.describe('Registration tests', () => {
     expect(await registrationPage.getFieldValue('password')).toBe(data.password);
     expect(await registrationPage.getFieldValue('confirmPassword')).toBe(data.confirmPassword);
 
-    expect(await registrationPage.isSubmitButtonActive()).toBe(true);
+    await expect(registrationPage.submitButton).toBeEnabled();
     await registrationPage.clickSubmitButton();
 
     await expect(page).toHaveURL(/.*login/);
 
-    const signInPage = new SignInPage(page);
     await signInPage.signIn(data.email, data.password);
 
-    const profilePage = new UserProfilePage(page);
-    await profilePage.waitForPageLoad();
-    expect(await profilePage.isOnProfilePage()).toBe(true);
+    await userProfilePage.waitForPageLoad();
+    expect(await userProfilePage.isOnProfilePage()).toBe(true);
   });
 });
 

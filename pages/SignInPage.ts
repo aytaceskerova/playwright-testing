@@ -29,19 +29,6 @@ export class SignInPage extends BasePage {
     await this.signInLink.click();
   }
 
-  async isSignInButtonActive(): Promise<boolean> {
-    return await this.signInButton.isEnabled();
-  }
-
-  async isSignInButtonInactive(): Promise<boolean> {
-    const isDisabled = await this.signInButton.getAttribute('disabled');
-    const ariaDisabled = await this.signInButton.getAttribute('aria-disabled');
-    const isEnabled = await this.signInButton.isEnabled();
-    const hasDisabledClass = await this.signInButton.evaluate((el) =>
-      el.classList.contains('disabled') || el.classList.contains('Mui-disabled')
-    );
-    return isDisabled !== null || ariaDisabled === 'true' || hasDisabledClass || !isEnabled;
-  }
 
   async fillEmail(email: string): Promise<void> {
     await this.emailInput.fill(email);

@@ -80,19 +80,6 @@ export class RegistrationPage extends BasePage {
     await this.submitButton.click();
   }
 
-  async isSubmitButtonActive(): Promise<boolean> {
-    return await this.submitButton.isEnabled();
-  }
-
-  async isSubmitButtonInactive(): Promise<boolean> {
-    const isDisabled = await this.submitButton.getAttribute('disabled');
-    const isEnabled = await this.submitButton.isEnabled();
-    return isDisabled !== null || !isEnabled;
-  }
-
-  async isSignInButtonActive(): Promise<boolean> {
-    return await this.signInButton.isEnabled();
-  }
 
   async areFieldsEmpty(): Promise<boolean> {
     try {
