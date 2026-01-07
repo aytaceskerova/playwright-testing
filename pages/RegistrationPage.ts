@@ -28,14 +28,8 @@ export class RegistrationPage extends BasePage {
     this.signInButton = page.locator('button', { hasText: 'Sing in' });
   }
 
-<<<<<<< HEAD
-  async goto(): Promise<void> {
-    await this.page.goto('/registration');
-    await this.page.waitForLoadState('networkidle');
-=======
   async openRegistrationPage(): Promise<void> {
     await this.goto('/registration');
->>>>>>> a4eaf3b (Refactor registration tests: add BasePage, move interface to types, simplify locators and remove unnecessary waiters)
   }
 
   async clickSignInLink(): Promise<void> {
