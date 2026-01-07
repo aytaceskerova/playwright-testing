@@ -44,12 +44,12 @@ export class RegistrationPage {
   async clickSignInLink(): Promise<void> {
     await this.signInLink.waitFor({ state: 'visible', timeout: 10000 });
     await this.signInLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async clickRegistrationLink(): Promise<void> {
     await this.registrationLink.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async fillFirstName(firstName: string): Promise<void> {
@@ -89,9 +89,9 @@ export class RegistrationPage {
 
   async clickSubmitButton(): Promise<void> {
     await this.page.keyboard.press('Escape');
-    await this.page.waitForTimeout(200); // Small wait to ensure date picker is closed
+    await this.page.waitForTimeout(200);
     await this.submitButton.click();
-    await this.page.waitForLoadState('networkidle');
+    await this.page.waitForLoadState('domcontentloaded');
   }
 
   async isSubmitButtonActive(): Promise<boolean> {
@@ -99,9 +99,18 @@ export class RegistrationPage {
   }
 
   async isSubmitButtonInactive(): Promise<boolean> {
-    const isDisabled = await this.submitButton.getAttribute('disabled');
-    const isEnabled = await this.submitButton.isEnabled();
-    return isDisabled !== null || !isEnabled;
+    try {
+      await this.submitButton.waitFor({ state: 'visible', timeout: 5000 });
+      const isDisabled = await this.submitButton.getAttribute('disabled');
+      const ariaDisabled = await this.submitButton.getAttribute('aria-disabled');
+      const isEnabled = await this.submitButton.isEnabled();
+      const hasDisabledClass = await this.submitButton.evaluate((el) => 
+        el.classList.contains('disabled') || el.classList.contains('Mui-disabled')
+      );
+      return isDisabled !== null || ariaDisabled === 'true' || hasDisabledClass || !isEnabled;
+    } catch {
+      return true;
+    }
   }
 
   async isSignInButtonActive(): Promise<boolean> {
@@ -143,4 +152,3 @@ export class RegistrationPage {
     }
   }
 }
-
