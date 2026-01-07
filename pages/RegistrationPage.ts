@@ -37,8 +37,8 @@ export class RegistrationPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/registration');
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto('/registration', { waitUntil: 'domcontentloaded' });
+    await this.firstNameInput.waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async clickSignInLink(): Promise<void> {

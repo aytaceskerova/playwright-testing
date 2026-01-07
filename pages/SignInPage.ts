@@ -19,8 +19,8 @@ export class SignInPage {
   }
 
   async goto(): Promise<void> {
-    await this.page.goto('/login');
-    await this.page.waitForLoadState('networkidle');
+    await this.page.goto('/login', { waitUntil: 'domcontentloaded' });
+    await this.emailInput.waitFor({ state: 'visible', timeout: 10000 });
   }
 
   async clickRegistrationLink(): Promise<void> {
@@ -71,6 +71,13 @@ export class SignInPage {
     const email = await this.emailInput.inputValue();
     const password = await this.passwordInput.inputValue();
     return email === '' && password === '';
+  }
+
+  async signIn(email: string, password: string): Promise<void> {
+    await this.fillEmail(email);
+    await this.fillPassword(password);
+    await this.signInButton.click();
+    await this.page.waitForLoadState('networkidle');
   }
 }
 
