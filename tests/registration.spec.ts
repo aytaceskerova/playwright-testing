@@ -17,16 +17,16 @@ test.describe('Registration tests', () => {
 
   test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page }) => {
     await signInPage.openSignInPage();
-    await signInPage.clickRegistrationLink();
+    await signInPage.registrationLink.click();
 
     await expect(page).toHaveURL(/.*registration/);
 
-    expect(await registrationPage.areFieldsEmpty()).toBe(true);
+    await registrationPage.areFieldsEmpty();
     await expect(registrationPage.submitButton).toBeVisible();
 
-    await registrationPage.clickSignInLink();
+    await registrationPage.signInLink.click();
     await expect(page).toHaveURL(/.*login/);
-    expect(await signInPage.areFieldsEmpty()).toBe(true);
+    await signInPage.areFieldsEmpty();
   });
 
   test('[AQAPRACT-508] registers with valid data', async ({ page }) => {
@@ -57,7 +57,7 @@ test.describe('Registration tests', () => {
     await signInPage.signIn(data.email, data.password);
 
     await userProfilePage.waitForPageLoad();
-    expect(await userProfilePage.isOnProfilePage()).toBe(true);
+    await expect(userProfilePage.signOut).toBeVisible();
   });
 });
 

@@ -1,4 +1,4 @@
-import { Locator } from '@playwright/test';
+import { Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class SignInPage extends BasePage {
@@ -21,13 +21,6 @@ export class SignInPage extends BasePage {
     await this.goto('/login');
   }
 
-  async clickRegistrationLink(): Promise<void> {
-    await this.registrationLink.click();
-  }
-
-  async clickSignInLink(): Promise<void> {
-    await this.signInLink.click();
-  }
 
 
   async fillEmail(email: string): Promise<void> {
@@ -38,10 +31,9 @@ export class SignInPage extends BasePage {
     await this.passwordInput.fill(password);
   }
 
-  async areFieldsEmpty(): Promise<boolean> {
-    const email = await this.emailInput.inputValue();
-    const password = await this.passwordInput.inputValue();
-    return email === '' && password === '';
+  async areFieldsEmpty(): Promise<void> {
+    await this.expectInputToBeEmpty(this.emailInput);
+    await this.expectInputToBeEmpty(this.passwordInput);
   }
 
   async signIn(email: string, password: string): Promise<void> {

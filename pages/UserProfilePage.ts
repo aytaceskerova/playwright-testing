@@ -1,4 +1,4 @@
-import { Locator } from '@playwright/test';
+import { Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class UserProfilePage extends BasePage {
@@ -9,13 +9,8 @@ export class UserProfilePage extends BasePage {
     this.signOut = page.getByText(/sign out/i).first();
   }
 
-  async isOnProfilePage(): Promise<boolean> {
-    await this.page.waitForLoadState('networkidle');
-    return await this.signOut.isVisible().catch(() => false);
-  }
-
   async waitForPageLoad(): Promise<void> {
     await this.page.waitForLoadState('networkidle');
-    await this.signOut.waitFor({ state: 'visible' }).catch(() => {});
+    await expect(this.signOut).toBeVisible();
   }
 }

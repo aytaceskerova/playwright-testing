@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test';
+import { Page, Locator, expect } from '@playwright/test';
 
 export class BasePage {
   readonly page: Page;
@@ -9,6 +9,10 @@ export class BasePage {
 
   async goto(url: string): Promise<void> {
     await this.page.goto(url, { waitUntil: 'domcontentloaded' });
+  }
+
+  protected async expectInputToBeEmpty(input: Locator): Promise<void> {
+    expect(await input.inputValue()).toBe('');
   }
 }
 

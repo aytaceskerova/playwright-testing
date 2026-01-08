@@ -1,4 +1,4 @@
-import { Locator } from '@playwright/test';
+import { Locator, expect } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { RegistrationData } from '../types/registration';
 
@@ -32,13 +32,6 @@ export class RegistrationPage extends BasePage {
     await this.goto('/registration');
   }
 
-  async clickSignInLink(): Promise<void> {
-    await this.signInLink.click();
-  }
-
-  async clickRegistrationLink(): Promise<void> {
-    await this.registrationLink.click();
-  }
 
   async fillFirstName(firstName: string): Promise<void> {
     await this.firstNameInput.fill(firstName);
@@ -76,31 +69,16 @@ export class RegistrationPage extends BasePage {
   }
 
   async clickSubmitButton(): Promise<void> {
-    await this.page.keyboard.press('Escape');
     await this.submitButton.click();
   }
 
-
-  async areFieldsEmpty(): Promise<boolean> {
-    try {
-      const firstName = await this.firstNameInput.inputValue();
-      const lastName = await this.lastNameInput.inputValue();
-      const dateOfBirth = await this.dateOfBirthInput.inputValue();
-      const email = await this.emailInput.inputValue();
-      const password = await this.passwordInput.inputValue();
-      const confirmPassword = await this.confirmPasswordInput.inputValue().catch(() => '');
-
-      return (
-        firstName === '' &&
-        lastName === '' &&
-        dateOfBirth === '' &&
-        email === '' &&
-        password === '' &&
-        confirmPassword === ''
-      );
-    } catch {
-      return false;
-    }
+  async areFieldsEmpty(): Promise<void> {
+    await this.expectInputToBeEmpty(this.firstNameInput);
+    await this.expectInputToBeEmpty(this.lastNameInput);
+    await this.expectInputToBeEmpty(this.dateOfBirthInput);
+    await this.expectInputToBeEmpty(this.emailInput);
+    await this.expectInputToBeEmpty(this.passwordInput);
+    await this.expectInputToBeEmpty(this.confirmPasswordInput);
   }
 
   async getFieldValue(fieldName: keyof RegistrationData): Promise<string> {
