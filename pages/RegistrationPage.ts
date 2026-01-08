@@ -1,4 +1,4 @@
-import { Locator, expect } from '@playwright/test';
+import { Locator, expect, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { RegistrationData } from '../types/registration';
 
@@ -14,7 +14,7 @@ export class RegistrationPage extends BasePage {
   readonly submitButton: Locator;
   readonly signInButton: Locator;
 
-  constructor(page: BasePage['page']) {
+  constructor(page: Page) {
     super(page);
     this.signInLink = page.locator('a', { hasText: 'Sing in' });
     this.registrationLink = page.locator('a', { hasText: 'Registration' });
@@ -31,8 +31,6 @@ export class RegistrationPage extends BasePage {
   async openRegistrationPage(): Promise<void> {
     await this.goto('/registration');
   }
-
-
   async fillFirstName(firstName: string): Promise<void> {
     await this.firstNameInput.fill(firstName);
   }
