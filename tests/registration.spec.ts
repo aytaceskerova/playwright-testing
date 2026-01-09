@@ -59,5 +59,76 @@ test.describe('Registration tests', () => {
     await userProfilePage.waitForPageLoad();
     await expect(userProfilePage.signOut).toBeVisible();
   });
+
+  test.describe('First name field validation', () => {
+    const fillAllFieldsExceptFirstName = async (registrationPage: RegistrationPage) => {
+      await registrationPage.fillLastName('Doe');
+      await registrationPage.fillDateOfBirth('2004-09-20');
+      await registrationPage.fillEmail(`test${Date.now()}@example.com`);
+      await registrationPage.fillPassword('TestPassword123');
+      await registrationPage.fillConfirmPassword('TestPassword123');
+    };
+
+    test('[AQAPRACT-509] Register with max First name length (255 characters)', async ({ page }) => {
+      await registrationPage.openRegistrationPage();
+      await fillAllFieldsExceptFirstName(registrationPage);
+
+      const firstName255 = 'a'.repeat(255);
+      await registrationPage.fillFirstName(firstName255);
+
+      expect(await registrationPage.getFieldValue('firstName')).toBe(firstName255);
+      await expect(registrationPage.submitButton).toBeEnabled();
+      await registrationPage.clickSubmitButton();
+
+      await expect(page).toHaveURL(/.*login/);
+    });
+
+    test('[AQAPRACT-510] Register with min \'First name\' length (1 character)', async ({ page }) => {
+      await registrationPage.openRegistrationPage();
+      await fillAllFieldsExceptFirstName(registrationPage);
+
+      await registrationPage.fillFirstName('a');
+
+      expect(await registrationPage.getFieldValue('firstName')).toBe('a');
+      await expect(registrationPage.submitButton).toBeEnabled();
+      await registrationPage.clickSubmitButton();
+
+      await expect(page).toHaveURL(/.*login/);
+    });
+
+    test('[AQAPRACT-511] Register with max+1 \'First name\' length (256 characters)', async ({ page }) => {
+      await registrationPage.openRegistrationPage();
+      await fillAllFieldsExceptFirstName(registrationPage);
+
+      const firstName256 = 'a'.repeat(256);
+      await registrationPage.fillFirstName(firstName256);
+
+      expect(await registrationPage.getFieldValue('firstName')).toBe(firstName256);
+      await registrationPage.submitButton.click();
+
+      await expect(page).toHaveURL(/.*registration/);
+    });
+
+    test('[AQAPRACT-512] Register with empty \'First name\' field', async ({ page }) => {
+      await registrationPage.openRegistrationPage();
+      await fillAllFieldsExceptFirstName(registrationPage);
+
+      expect(await registrationPage.getFieldValue('firstName')).toBe('');
+      await expect(registrationPage.submitButton).toBeDisabled();
+      await expect(page).toHaveURL(/.*registration/);
+    });
+
+    test('[AQAPRACT-513] Register with spaces in \'First name\' field', async ({ page }) => {
+      await registrationPage.openRegistrationPage();
+      await fillAllFieldsExceptFirstName(registrationPage);
+
+      await registrationPage.fillFirstName('   ');
+
+      expect(await registrationPage.getFieldValue('firstName')).toBe('   ');
+      await registrationPage.submitButton.click();
+
+      await expect(page).toHaveURL(/.*registration/);
+    });
+  });
 });
 
