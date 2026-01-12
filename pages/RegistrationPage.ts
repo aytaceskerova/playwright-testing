@@ -14,6 +14,7 @@ export class RegistrationPage extends BasePage {
   readonly submitButton: Locator;
   readonly signInButton: Locator;
   readonly firstNameError: Locator;
+  readonly lastNameError: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -28,6 +29,7 @@ export class RegistrationPage extends BasePage {
     this.submitButton = page.locator('button[type="submit"]');
     this.signInButton = page.locator('button', { hasText: 'Sing in' });
     this.firstNameError = page.locator('//label[input[@name="firstName"]]/following-sibling::div[1]/span');
+    this.lastNameError = page.locator('//label[input[@name="lastName"]]/following-sibling::div[1]/span');
   }
 
   async openRegistrationPage(): Promise<void> {
