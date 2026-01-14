@@ -181,22 +181,12 @@ test.describe('Date of birth field validation', () => {
   });
 
   test('[AQAPRACT-520] The elements on the calendar picker are available', async ({ page }) => {
-    await registrationPage.dateOfBirthInput.click();
-    const calendar = page.locator('.react-datepicker');
-    await expect(calendar).toBeVisible();
-    const prevButton = calendar.locator('button').first();
-    const nextButton = calendar.locator('button').last();
-    await prevButton.click();
-    await nextButton.click();
-    const yearDropdown = calendar.locator('select').first();
-    await expect(yearDropdown).toBeVisible();
-    await yearDropdown.selectOption('2026');
-    const monthDropdown = calendar.locator('select').last();
-    await expect(monthDropdown).toBeVisible();
-    await monthDropdown.selectOption('June');
-    const dayButton = calendar.locator('.react-datepicker__day:not(.react-datepicker__day--outside-month)').first();
-    await expect(dayButton).toBeVisible();
-    await dayButton.click();
+    await registrationPage.openCalendar();
+    await registrationPage.navigateCalendarPrev();
+    await registrationPage.navigateCalendarNext();
+    await registrationPage.selectYear('2026');
+    await registrationPage.selectMonth('June');
+    await registrationPage.selectDay();
     expect(await registrationPage.getFieldValue('dateOfBirth')).not.toBe('');
   });
 
