@@ -15,6 +15,7 @@ export class RegistrationPage extends BasePage {
   readonly signInButton: Locator;
   readonly firstNameError: Locator;
   readonly lastNameError: Locator;
+  readonly dateOfBirthError: Locator;
   readonly calendar: Locator;
   readonly calendarPrevButton: Locator;
   readonly calendarNextButton: Locator;
@@ -36,6 +37,7 @@ export class RegistrationPage extends BasePage {
     this.signInButton = page.locator('button', { hasText: 'Sing in' });
     this.firstNameError = page.locator('//label[input[@name="firstName"]]/following-sibling::div[1]/span');
     this.lastNameError = page.locator('//label[input[@name="lastName"]]/following-sibling::div[1]/span');
+    this.dateOfBirthError = page.locator('//label[input[@name="dateOfBirth"]]/following-sibling::div[1]/span');
     this.calendar = page.locator('.react-datepicker');
     this.calendarPrevButton = this.calendar.locator('button').first();
     this.calendarNextButton = this.calendar.locator('button').last();
@@ -137,5 +139,27 @@ export class RegistrationPage extends BasePage {
   async selectDay(): Promise<void> {
     await expect(this.calendarDayButton).toBeVisible();
     await this.calendarDayButton.click();
+  }
+
+  async getSelectedYear(): Promise<string> {
+    return await this.calendarYearDropdown.inputValue();
+  }
+
+  async getSelectedMonth(): Promise<string> {
+    return await this.calendarMonthDropdown.locator('option:checked').textContent() || '';
+  }
+
+  async isYearDropdownScrollable(): Promise<boolean> {
+    const options = await this.calendarYearDropdown.locator('option').count();
+    return options > 1;
+  }
+
+  async isMonthDropdownScrollable(): Promise<boolean> {
+    const options = await this.calendarMonthDropdown.locator('option').count();
+    return options > 1;
+  }
+
+  async closeCalendar(): Promise<void> {
+    await this.page.keyboard.press('Escape');
   }
 }

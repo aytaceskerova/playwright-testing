@@ -181,13 +181,34 @@ test.describe('Date of birth field validation', () => {
   });
 
   test('[AQAPRACT-520] The elements on the calendar picker are available', async ({ page }) => {
-    await registrationPage.openCalendar();
+    await registrationPage.dateOfBirthInput.click();
+    await expect(registrationPage.calendar).toBeVisible();
+    const monthBeforePrev = await registrationPage.getSelectedMonth();
     await registrationPage.navigateCalendarPrev();
+    const monthAfterPrev = await registrationPage.getSelectedMonth();
+    expect(monthAfterPrev).not.toBe(monthBeforePrev);
     await registrationPage.navigateCalendarNext();
+    const monthAfterNext = await registrationPage.getSelectedMonth();
+    expect(monthAfterNext).toBe(monthBeforePrev);
+    await expect(registrationPage.calendarYearDropdown).toBeVisible();
+    const isYearScrollable = await registrationPage.isYearDropdownScrollable();
+    expect(isYearScrollable).toBe(true);
     await registrationPage.selectYear('2026');
+    const selectedYear = await registrationPage.getSelectedYear();
+    expect(selectedYear).toBe('2026');
+    await expect(registrationPage.calendarMonthDropdown).toBeVisible();
+    const isMonthScrollable = await registrationPage.isMonthDropdownScrollable();
+    expect(isMonthScrollable).toBe(true);
     await registrationPage.selectMonth('June');
+    const selectedMonth = await registrationPage.getSelectedMonth();
+    expect(selectedMonth).toBe('June');
     await registrationPage.selectDay();
-    expect(await registrationPage.getFieldValue('dateOfBirth')).not.toBe('');
+    const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
+    expect(dateOfBirthValue).not.toBe('');
+    expect(dateOfBirthValue).toContain('2026');
+    expect(dateOfBirthValue).toContain('06');
+    await registrationPage.closeCalendar();
+    await expect(registrationPage.calendar).not.toBeVisible();
   });
 
   test('[AQAPRACT-521] The date is filled in manually in the "Date of birth" field', async () => {
@@ -201,6 +222,7 @@ test.describe('Date of birth field validation', () => {
     await registrationPage.fillDateOfBirth(futureDate);
     await registrationPage.submitButton.click();
     await expect(page).toHaveURL(/.*registration/);
+    await expect(registrationPage.dateOfBirthError).toBeVisible();
   });
 });
 
