@@ -149,14 +149,14 @@ export class RegistrationPage extends BasePage {
     return await this.calendarMonthDropdown.locator('option:checked').textContent() || '';
   }
 
-  async isYearDropdownScrollable(): Promise<boolean> {
+  async validateYearDropdownScrollable(): Promise<void> {
     const options = await this.calendarYearDropdown.locator('option').count();
-    return options > 1;
+    expect(options).toBeGreaterThan(1);
   }
 
-  async isMonthDropdownScrollable(): Promise<boolean> {
+  async validateMonthDropdownScrollable(): Promise<void> {
     const options = await this.calendarMonthDropdown.locator('option').count();
-    return options > 1;
+    expect(options).toBeGreaterThan(1);
   }
 
   async closeCalendar(): Promise<void> {

@@ -191,14 +191,12 @@ test.describe('Date of birth field validation', () => {
     const monthAfterNext = await registrationPage.getSelectedMonth();
     expect(monthAfterNext).toBe(monthBeforePrev);
     await expect(registrationPage.calendarYearDropdown).toBeVisible();
-    const isYearScrollable = await registrationPage.isYearDropdownScrollable();
-    expect(isYearScrollable).toBe(true);
+    await registrationPage.validateYearDropdownScrollable();
     await registrationPage.selectYear('2026');
     const selectedYear = await registrationPage.getSelectedYear();
     expect(selectedYear).toBe('2026');
     await expect(registrationPage.calendarMonthDropdown).toBeVisible();
-    const isMonthScrollable = await registrationPage.isMonthDropdownScrollable();
-    expect(isMonthScrollable).toBe(true);
+    await registrationPage.validateMonthDropdownScrollable();
     await registrationPage.selectMonth('June');
     const selectedMonth = await registrationPage.getSelectedMonth();
     expect(selectedMonth).toBe('June');
