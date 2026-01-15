@@ -83,7 +83,7 @@ test.describe('First name field validation', () => {
     await registrationPage.clickSubmitButton();
     await expect(page).toHaveURL(/.*login/);
   });
-
+  
   test('[AQAPRACT-511] Register with max+1 \'First name\' length (256 characters)', async ({ page }) => {
     const firstName256 = 'a'.repeat(256);
     await registrationPage.fillFirstName(firstName256);
@@ -158,6 +158,86 @@ test.describe('Last name field validation', () => {
     await expect(page).toHaveURL(/.*registration/);
     await expect(registrationPage.lastNameError).toBeVisible();
     await expect(registrationPage.lastNameError).toContainText('Required');
+  });
+});
+
+test.describe('Date of birth field validation', () => {
+  let registrationPage: RegistrationPage;
+
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    await registrationPage.openRegistrationPage();
+    await registrationPage.fillFirstName('TestKai');
+    await registrationPage.fillLastName('Doe');
+    await registrationPage.fillEmail(`test${Date.now()}@example.com`);
+    await registrationPage.fillPassword('TestPassword123');
+    await registrationPage.fillConfirmPassword('TestPassword123');
+  });
+
+  test('[AQAPRACT-519] Register with empty "Date of birth" field', async ({ page }) => {
+    expect(await registrationPage.getFieldValue('dateOfBirth')).toBe('');
+    await expect(registrationPage.submitButton).toBeDisabled();
+    await expect(page).toHaveURL(/.*registration/);
+  });
+
+  test('[AQAPRACT-520] The elements on the calendar picker are available', async ({ page }) => {
+    await test.step('Open calendar', async () => {
+      await registrationPage.dateOfBirthInput.click();
+      await expect(registrationPage.calendar).toBeVisible();
+    });
+
+    await test.step('Navigate months with arrows', async () => {
+      const monthBeforePrev = await registrationPage.getSelectedMonth();
+      await registrationPage.navigateCalendarPrev();
+      const monthAfterPrev = await registrationPage.getSelectedMonth();
+      expect(monthAfterPrev).not.toBe(monthBeforePrev);
+      await registrationPage.navigateCalendarNext();
+      const monthAfterNext = await registrationPage.getSelectedMonth();
+      expect(monthAfterNext).toBe(monthBeforePrev);
+    });
+
+    await test.step('Select year from dropdown', async () => {
+      await expect(registrationPage.calendarYearDropdown).toBeVisible();
+      await registrationPage.validateYearDropdownScrollable();
+      await registrationPage.selectYear('2026');
+      const selectedYear = await registrationPage.getSelectedYear();
+      expect(selectedYear).toBe('2026');
+    });
+
+    await test.step('Select month from dropdown', async () => {
+      await expect(registrationPage.calendarMonthDropdown).toBeVisible();
+      await registrationPage.validateMonthDropdownScrollable();
+      await registrationPage.selectMonth('June');
+      const selectedMonth = await registrationPage.getSelectedMonth();
+      expect(selectedMonth).toBe('June');
+    });
+
+    await test.step('Select day and verify date input', async () => {
+      await registrationPage.selectDay();
+      const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
+      expect(dateOfBirthValue).not.toBe('');
+      expect(dateOfBirthValue).toContain('2026');
+      expect(dateOfBirthValue).toContain('06');
+    });
+
+    await test.step('Close calendar', async () => {
+      await registrationPage.closeCalendar();
+      await expect(registrationPage.calendar).not.toBeVisible();
+    });
+  });
+
+  test('[AQAPRACT-521] The date is filled in manually in the "Date of birth" field', async () => {
+    const date = '2004-09-20';
+    await registrationPage.fillDateOfBirth(date);
+    expect(await registrationPage.getFieldValue('dateOfBirth')).toBe('09/20/2004');
+  });
+
+  test('[AQAPRACT-522] It\'s impossible to register with the "Date of birth" in the future', async ({ page }) => {
+    const futureDate = '2999-01-01';
+    await registrationPage.fillDateOfBirth(futureDate);
+    await registrationPage.submitButton.click();
+    await expect(page).toHaveURL(/.*registration/);
+    await expect(registrationPage.dateOfBirthError).toBeVisible();
   });
 });
 

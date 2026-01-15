@@ -15,6 +15,13 @@ export class RegistrationPage extends BasePage {
   readonly signInButton: Locator;
   readonly firstNameError: Locator;
   readonly lastNameError: Locator;
+  readonly dateOfBirthError: Locator;
+  readonly calendar: Locator;
+  readonly calendarPrevButton: Locator;
+  readonly calendarNextButton: Locator;
+  readonly calendarYearDropdown: Locator;
+  readonly calendarMonthDropdown: Locator;
+  readonly calendarDayButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -30,6 +37,13 @@ export class RegistrationPage extends BasePage {
     this.signInButton = page.locator('button', { hasText: 'Sing in' });
     this.firstNameError = page.locator('//label[input[@name="firstName"]]/following-sibling::div[1]/span');
     this.lastNameError = page.locator('//label[input[@name="lastName"]]/following-sibling::div[1]/span');
+    this.dateOfBirthError = page.locator('//label[input[@name="dateOfBirth"]]/following-sibling::div[1]/span');
+    this.calendar = page.locator('.react-datepicker');
+    this.calendarPrevButton = this.calendar.locator('button').first();
+    this.calendarNextButton = this.calendar.locator('button').last();
+    this.calendarYearDropdown = this.calendar.locator('select').first();
+    this.calendarMonthDropdown = this.calendar.locator('select').last();
+    this.calendarDayButton = this.calendar.locator('.react-datepicker__day:not(.react-datepicker__day--outside-month)').first();
   }
 
   async openRegistrationPage(): Promise<void> {
@@ -98,5 +112,54 @@ export class RegistrationPage extends BasePage {
       case 'confirmPassword':
         return await this.confirmPasswordInput.inputValue().catch(() => '');
     }
+  }
+
+  async openCalendar(): Promise<void> {
+    await this.dateOfBirthInput.click();
+    await expect(this.calendar).toBeVisible();
+  }
+
+  async navigateCalendarPrev(): Promise<void> {
+    await this.calendarPrevButton.click();
+  }
+
+  async navigateCalendarNext(): Promise<void> {
+    await this.calendarNextButton.click();
+  }
+
+  async selectYear(year: string): Promise<void> {
+    await expect(this.calendarYearDropdown).toBeVisible();
+    await this.calendarYearDropdown.selectOption(year);
+  }
+
+  async selectMonth(month: string): Promise<void> {
+    await expect(this.calendarMonthDropdown).toBeVisible();
+    await this.calendarMonthDropdown.selectOption(month);
+  }
+  async selectDay(): Promise<void> {
+    await expect(this.calendarDayButton).toBeVisible();
+    await this.calendarDayButton.click();
+  }
+
+  async getSelectedYear(): Promise<string> {
+    return await this.calendarYearDropdown.inputValue();
+  }
+
+  async getSelectedMonth(): Promise<string> {
+    return await this.calendarMonthDropdown.locator('option:checked').textContent() || '';
+  }
+
+  async validateYearDropdownScrollable(): Promise<void> {
+    const options = await this.calendarYearDropdown.locator('option').count();
+    expect(options).toBeGreaterThan(1);
+  }
+
+  async validateMonthDropdownScrollable(): Promise<void> {
+    const options = await this.calendarMonthDropdown.locator('option').count();
+    expect(options).toBeGreaterThan(1);
+  }
+
+  async closeCalendar(): Promise<void> {
+    await this.page.keyboard.press('Escape');
   }
 }
