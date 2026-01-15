@@ -181,32 +181,49 @@ test.describe('Date of birth field validation', () => {
   });
 
   test('[AQAPRACT-520] The elements on the calendar picker are available', async ({ page }) => {
-    await registrationPage.dateOfBirthInput.click();
-    await expect(registrationPage.calendar).toBeVisible();
-    const monthBeforePrev = await registrationPage.getSelectedMonth();
-    await registrationPage.navigateCalendarPrev();
-    const monthAfterPrev = await registrationPage.getSelectedMonth();
-    expect(monthAfterPrev).not.toBe(monthBeforePrev);
-    await registrationPage.navigateCalendarNext();
-    const monthAfterNext = await registrationPage.getSelectedMonth();
-    expect(monthAfterNext).toBe(monthBeforePrev);
-    await expect(registrationPage.calendarYearDropdown).toBeVisible();
-    await registrationPage.validateYearDropdownScrollable();
-    await registrationPage.selectYear('2026');
-    const selectedYear = await registrationPage.getSelectedYear();
-    expect(selectedYear).toBe('2026');
-    await expect(registrationPage.calendarMonthDropdown).toBeVisible();
-    await registrationPage.validateMonthDropdownScrollable();
-    await registrationPage.selectMonth('June');
-    const selectedMonth = await registrationPage.getSelectedMonth();
-    expect(selectedMonth).toBe('June');
-    await registrationPage.selectDay();
-    const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
-    expect(dateOfBirthValue).not.toBe('');
-    expect(dateOfBirthValue).toContain('2026');
-    expect(dateOfBirthValue).toContain('06');
-    await registrationPage.closeCalendar();
-    await expect(registrationPage.calendar).not.toBeVisible();
+    await test.step('Open calendar', async () => {
+      await registrationPage.dateOfBirthInput.click();
+      await expect(registrationPage.calendar).toBeVisible();
+    });
+
+    await test.step('Navigate months with arrows', async () => {
+      const monthBeforePrev = await registrationPage.getSelectedMonth();
+      await registrationPage.navigateCalendarPrev();
+      const monthAfterPrev = await registrationPage.getSelectedMonth();
+      expect(monthAfterPrev).not.toBe(monthBeforePrev);
+      await registrationPage.navigateCalendarNext();
+      const monthAfterNext = await registrationPage.getSelectedMonth();
+      expect(monthAfterNext).toBe(monthBeforePrev);
+    });
+
+    await test.step('Select year from dropdown', async () => {
+      await expect(registrationPage.calendarYearDropdown).toBeVisible();
+      await registrationPage.validateYearDropdownScrollable();
+      await registrationPage.selectYear('2026');
+      const selectedYear = await registrationPage.getSelectedYear();
+      expect(selectedYear).toBe('2026');
+    });
+
+    await test.step('Select month from dropdown', async () => {
+      await expect(registrationPage.calendarMonthDropdown).toBeVisible();
+      await registrationPage.validateMonthDropdownScrollable();
+      await registrationPage.selectMonth('June');
+      const selectedMonth = await registrationPage.getSelectedMonth();
+      expect(selectedMonth).toBe('June');
+    });
+
+    await test.step('Select day and verify date input', async () => {
+      await registrationPage.selectDay();
+      const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
+      expect(dateOfBirthValue).not.toBe('');
+      expect(dateOfBirthValue).toContain('2026');
+      expect(dateOfBirthValue).toContain('06');
+    });
+
+    await test.step('Close calendar', async () => {
+      await registrationPage.closeCalendar();
+      await expect(registrationPage.calendar).not.toBeVisible();
+    });
   });
 
   test('[AQAPRACT-521] The date is filled in manually in the "Date of birth" field', async () => {
