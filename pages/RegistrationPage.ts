@@ -16,6 +16,7 @@ export class RegistrationPage extends BasePage {
   readonly firstNameError: Locator;
   readonly lastNameError: Locator;
   readonly dateOfBirthError: Locator;
+  readonly emailError: Locator;
   readonly calendar: Locator;
   readonly calendarPrevButton: Locator;
   readonly calendarNextButton: Locator;
@@ -38,6 +39,7 @@ export class RegistrationPage extends BasePage {
     this.firstNameError = page.locator('//label[input[@name="firstName"]]/following-sibling::div[1]/span');
     this.lastNameError = page.locator('//label[input[@name="lastName"]]/following-sibling::div[1]/span');
     this.dateOfBirthError = page.locator('//label[input[@name="dateOfBirth"]]/following-sibling::div[1]/span');
+    this.emailError = page.locator('//label[input[@name="email"]]/following-sibling::div[1]/span');
     this.calendar = page.locator('.react-datepicker');
     this.calendarPrevButton = this.calendar.locator('button').first();
     this.calendarNextButton = this.calendar.locator('button').last();

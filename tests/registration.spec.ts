@@ -241,3 +241,91 @@ test.describe('Date of birth field validation', () => {
   });
 });
 
+test.describe('Email field validation', () => {
+  let registrationPage: RegistrationPage;
+
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    await registrationPage.openRegistrationPage();
+    await registrationPage.fillFirstName('TestKai');
+    await registrationPage.fillLastName('Egv');
+    await registrationPage.fillDateOfBirth('2004-09-20');
+    await registrationPage.fillPassword('TestPassword123');
+    await registrationPage.fillConfirmPassword('TestPassword123');
+  });
+
+  test('[AQAPRACT-523] Register with empty "Email" field', async ({ page }) => {
+    await test.step('Leave the "Email" field empty', async () => {
+      expect(await registrationPage.getFieldValue('email')).toBe('');
+      await expect(registrationPage.submitButton).toBeDisabled();
+      await expect(page).toHaveURL(/.*registration/);
+    });
+  });
+
+  test('[AQAPRACT-524] Register with invalid format of email address', async ({ page }) => {
+    await test.step('Input "Abc" value and focus out', async () => {
+      await registrationPage.fillEmail('Abc');
+      await registrationPage.emailInput.blur();
+      expect(await registrationPage.getFieldValue('email')).toBe('Abc');
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailError).toBeVisible();
+      await expect(registrationPage.emailError).toContainText('Invalid email address');
+    });
+
+    await test.step('Input "Abc@abc@abc" value and focus out', async () => {
+      await registrationPage.fillEmail('Abc@abc@abc');
+      await registrationPage.emailInput.blur();
+      expect(await registrationPage.getFieldValue('email')).toBe('Abc@abc@abc');
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailError).toBeVisible();
+      await expect(registrationPage.emailError).toContainText('Invalid email address');
+    });
+
+    await test.step('Input "Abc abc@abc" value and focus out', async () => {
+      await registrationPage.fillEmail('Abc abc@abc');
+      await registrationPage.emailInput.blur();
+      expect(await registrationPage.getFieldValue('email')).toBe('Abc abc@abc');
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailError).toBeVisible();
+      await expect(registrationPage.emailError).toContainText('Invalid email address');
+    });
+
+    await test.step('Input "dsf()ds@ds" value and focus out', async () => {
+      await registrationPage.fillEmail('dsf()ds@ds');
+      await registrationPage.emailInput.blur();
+      expect(await registrationPage.getFieldValue('email')).toBe('dsf()ds@ds');
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailError).toBeVisible();
+      await expect(registrationPage.emailError).toContainText('Invalid email address');
+    });
+  });
+
+  test('[AQAPRACT-525] Register with already existed email', async ({ page }) => {
+    const existingEmail = `existing${Date.now()}@example.com`;
+    
+    await test.step('Register user with email', async () => {
+      await registrationPage.fillEmail(existingEmail);
+      await registrationPage.clickSubmitButton();
+      await expect(page).toHaveURL(/.*login/);
+    });
+
+    await test.step('Enter already registered email', async () => {
+      await registrationPage.openRegistrationPage();
+      await registrationPage.fillFirstName('TestKai');
+      await registrationPage.fillLastName('Egv');
+      await registrationPage.fillDateOfBirth('2004-09-20');
+      await registrationPage.fillPassword('TestPassword123');
+      await registrationPage.fillConfirmPassword('TestPassword123');
+      await registrationPage.fillEmail(existingEmail);
+      expect(await registrationPage.getFieldValue('email')).toBe(existingEmail);
+      await expect(registrationPage.submitButton).toBeEnabled();
+    });
+
+    await test.step('Click on the Submit button', async () => {
+      await registrationPage.clickSubmitButton();
+      await expect(registrationPage.emailError).toBeVisible();
+      await expect(registrationPage.emailError).toContainText('User with email address already exist');
+      await expect(page).toHaveURL(/.*registration/);
+    });
+  });
+});
