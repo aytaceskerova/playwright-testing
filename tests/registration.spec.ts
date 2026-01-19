@@ -255,11 +255,9 @@ test.describe('Email field validation', () => {
   });
 
   test('[AQAPRACT-523] Register with empty "Email" field', async ({ page }) => {
-    await test.step('Leave the "Email" field empty', async () => {
-      expect(await registrationPage.getFieldValue('email')).toBe('');
-      await expect(registrationPage.submitButton).toBeDisabled();
-      await expect(page).toHaveURL(/.*registration/);
-    });
+    expect(await registrationPage.getFieldValue('email')).toBe('');
+    await expect(registrationPage.submitButton).toBeDisabled();
+    await expect(page).toHaveURL(/.*registration/);
   });
 
   test('[AQAPRACT-524] Register with invalid format of email address', async ({ page }) => {
@@ -383,32 +381,26 @@ test.describe('Password field validation', () => {
   });
   test('[AQAPRACT-528] Register with min-1 "Password" length (7 characters)', async ({ page }) => {
     const password7 = 'Test123';
-    await test.step('Enter 7 characters to the "Password" field', async () => {
-      await registrationPage.fillPassword(password7);
-      await registrationPage.passwordInput.blur();
-      expect(await registrationPage.getFieldValue('password')).toBe(password7);
-      await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
-      await expect(registrationPage.passwordError).toBeVisible();
-      await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
-    });
+    await registrationPage.fillPassword(password7);
+    await registrationPage.passwordInput.blur();
+    expect(await registrationPage.getFieldValue('password')).toBe(password7);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordError).toBeVisible();
+    await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
   });
   test('[AQAPRACT-529] Register with max+1 "Password" length (21 characters)', async ({ page }) => {
     const password21 = 'Password12345678901234';
-    await test.step('Enter 21 characters to the "Password" field', async () => {
-      await registrationPage.fillPassword(password21);
-      await registrationPage.passwordInput.blur();
-      expect(await registrationPage.getFieldValue('password')).toBe(password21);
-      await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
-      await expect(registrationPage.passwordError).toBeVisible();
-      await expect(registrationPage.passwordError).toContainText('Maximum 20 characters');
-    });
+    await registrationPage.fillPassword(password21);
+    await registrationPage.passwordInput.blur();
+    expect(await registrationPage.getFieldValue('password')).toBe(password21);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordError).toBeVisible();
+    await expect(registrationPage.passwordError).toContainText('Maximum 20 characters');
   });
   test('[AQAPRACT-530] Register with empty "Password" field', async ({ page }) => {
-    await test.step('Leave the "Password" field empty after the focus out', async () => {
-      await registrationPage.passwordInput.focus();
-      await registrationPage.passwordInput.blur();
-      expect(await registrationPage.getFieldValue('password')).toBe('');
-      await expect(registrationPage.submitButton).toBeDisabled();
-    });
+    await registrationPage.passwordInput.focus();
+    await registrationPage.passwordInput.blur();
+    expect(await registrationPage.getFieldValue('password')).toBe('');
+    await expect(registrationPage.submitButton).toBeDisabled();
   });
 });
