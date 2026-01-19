@@ -255,11 +255,9 @@ test.describe('Email field validation', () => {
   });
 
   test('[AQAPRACT-523] Register with empty "Email" field', async ({ page }) => {
-    await test.step('Leave the "Email" field empty', async () => {
-      expect(await registrationPage.getFieldValue('email')).toBe('');
-      await expect(registrationPage.submitButton).toBeDisabled();
-      await expect(page).toHaveURL(/.*registration/);
-    });
+    expect(await registrationPage.getFieldValue('email')).toBe('');
+    await expect(registrationPage.submitButton).toBeDisabled();
+    await expect(page).toHaveURL(/.*registration/);
   });
 
   test('[AQAPRACT-524] Register with invalid format of email address', async ({ page }) => {
@@ -302,13 +300,11 @@ test.describe('Email field validation', () => {
 
   test('[AQAPRACT-525] Register with already existed email', async ({ page }) => {
     const existingEmail = `existing${Date.now()}@example.com`;
-    
     await test.step('Register user with email', async () => {
       await registrationPage.fillEmail(existingEmail);
       await registrationPage.clickSubmitButton();
       await expect(page).toHaveURL(/.*login/);
     });
-
     await test.step('Enter already registered email', async () => {
       await registrationPage.openRegistrationPage();
       await registrationPage.fillFirstName('TestKai');
@@ -320,12 +316,91 @@ test.describe('Email field validation', () => {
       expect(await registrationPage.getFieldValue('email')).toBe(existingEmail);
       await expect(registrationPage.submitButton).toBeEnabled();
     });
-
     await test.step('Click on the Submit button', async () => {
       await registrationPage.clickSubmitButton();
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('User with email address already exist');
       await expect(page).toHaveURL(/.*registration/);
     });
+  });
+});
+
+test.describe('Password field validation', () => {
+  let registrationPage: RegistrationPage;
+  let signInPage: SignInPage;
+  let userProfilePage: UserProfilePage;
+
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    signInPage = new SignInPage(page);
+    userProfilePage = new UserProfilePage(page);
+    await registrationPage.openRegistrationPage();
+    await registrationPage.fillFirstName('TestKai');
+    await registrationPage.fillLastName('Doe');
+    await registrationPage.fillDateOfBirth('2004-09-20');
+    await registrationPage.fillEmail(`test${Date.now()}@example.com`);
+  });
+
+  test('[AQAPRACT-526] Register with min \'Password\' length (8 characters)', async ({ page }) => {
+    const password8 = 'Test1234';
+    const email = await registrationPage.getFieldValue('email');
+    await test.step('Enter 8 characters in "Password" field', async () => {
+      await registrationPage.fillPassword(password8);
+      expect(await registrationPage.getFieldValue('password')).toBe(password8);
+    });
+    await test.step('Enter the same 8 characters from the first step in the "Confirm password" field', async () => {
+      await registrationPage.fillConfirmPassword(password8);
+      expect(await registrationPage.getFieldValue('confirmPassword')).toBe(password8);
+    });
+    await test.step('Click the "Submit" button', async () => {
+      await registrationPage.clickSubmitButton();
+      await expect(page).toHaveURL(/.*login/);
+      await signInPage.signIn(email, password8);
+      await userProfilePage.waitForPageLoad();
+      await expect(userProfilePage.signOut).toBeVisible();
+    });
+  });
+  test('[AQAPRACT-527] Register with max "Password" length (20 characters)', async ({ page }) => {
+    const password20 = 'TestPassword123456';
+    const email = await registrationPage.getFieldValue('email');
+    await test.step('Enter 20 characters to the "Password" field', async () => {
+      await registrationPage.fillPassword(password20);
+      expect(await registrationPage.getFieldValue('password')).toBe(password20);
+    });
+    await test.step('Enter the same 20 characters from the first step in the "Confirm password" field', async () => {
+      await registrationPage.fillConfirmPassword(password20);
+      expect(await registrationPage.getFieldValue('confirmPassword')).toBe(password20);
+    });
+    await test.step('Click the "Submit" button', async () => {
+      await registrationPage.clickSubmitButton();
+      await expect(page).toHaveURL(/.*login/);
+      await signInPage.signIn(email, password20);
+      await userProfilePage.waitForPageLoad();
+      await expect(userProfilePage.signOut).toBeVisible();
+    });
+  });
+  test('[AQAPRACT-528] Register with min-1 "Password" length (7 characters)', async ({ page }) => {
+    const password7 = 'Test123';
+    await registrationPage.fillPassword(password7);
+    await registrationPage.passwordInput.blur();
+    expect(await registrationPage.getFieldValue('password')).toBe(password7);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordError).toBeVisible();
+    await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
+  });
+  test('[AQAPRACT-529] Register with max+1 "Password" length (21 characters)', async ({ page }) => {
+    const password21 = 'Password12345678901234';
+    await registrationPage.fillPassword(password21);
+    await registrationPage.passwordInput.blur();
+    expect(await registrationPage.getFieldValue('password')).toBe(password21);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordError).toBeVisible();
+    await expect(registrationPage.passwordError).toContainText('Maximum 20 characters');
+  });
+  test('[AQAPRACT-530] Register with empty "Password" field', async ({ page }) => {
+    await registrationPage.passwordInput.focus();
+    await registrationPage.passwordInput.blur();
+    expect(await registrationPage.getFieldValue('password')).toBe('');
+    await expect(registrationPage.submitButton).toBeDisabled();
   });
 });
