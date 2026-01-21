@@ -404,3 +404,55 @@ test.describe('Password field validation', () => {
     await expect(registrationPage.submitButton).toBeDisabled();
   });
 });
+
+test.describe('Confirm password field validation', () => {
+  let registrationPage: RegistrationPage;
+  let signInPage: SignInPage;
+  let userProfilePage: UserProfilePage;
+
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    signInPage = new SignInPage(page);
+    userProfilePage = new UserProfilePage(page);
+    await registrationPage.openRegistrationPage();
+    await registrationPage.fillFirstName('TestKai');
+    await registrationPage.fillLastName('Doe');
+    await registrationPage.fillDateOfBirth('2004-09-20');
+    await registrationPage.fillEmail(`test${Date.now()}@example.com`);
+    await registrationPage.fillPassword('TestPassword123');
+  });
+
+  test('[AQAPRACT-531] Register with equal data "Password" and "Confirm password" fields', async ({ page }) => {
+    const password = 'TestPassword123';
+    const email = await registrationPage.getFieldValue('email');
+    await test.step('Enter the same data from the field "Password" in the "Confirm password" field', async () => {
+      await registrationPage.fillConfirmPassword(password);
+      expect(await registrationPage.getFieldValue('confirmPassword')).toBe(password);
+    });
+    await test.step('Click the "Submit" button', async () => {
+      await registrationPage.clickSubmitButton();
+      await expect(page).toHaveURL(/.*login/);
+      await signInPage.signIn(email, password);
+      await userProfilePage.waitForPageLoad();
+      await expect(userProfilePage.signOut).toBeVisible();
+    });
+  });
+
+  test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ page }) => {
+    await registrationPage.fillConfirmPassword('Different123');
+    await registrationPage.confirmPasswordInput.blur();
+    expect(await registrationPage.getFieldValue('confirmPassword')).toBe('Different123');
+    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.confirmPasswordError).toBeVisible();
+    await expect(registrationPage.confirmPasswordError).toContainText('Passwords must match');
+  });
+
+  test('[AQAPRACT-533] Register with empty "Confirm password" field', async ({ page }) => {
+    await registrationPage.confirmPasswordInput.focus();
+    await registrationPage.confirmPasswordInput.blur();
+    expect(await registrationPage.getFieldValue('confirmPassword')).toBe('');
+    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.confirmPasswordError).toBeVisible();
+    await expect(registrationPage.confirmPasswordError).toContainText('Required');
+  });
+});
