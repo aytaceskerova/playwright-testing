@@ -406,6 +406,8 @@ test.describe('Password field validation', () => {
 });
 
 test.describe('Confirm password field validation', () => {
+  const INVALID_CONFIRM_PASSWORD = 'Different123';
+  const ERROR_BORDER_COLOR = /rgb\(2\d{2}/;
   let registrationPage: RegistrationPage;
   let signInPage: SignInPage;
   let userProfilePage: UserProfilePage;
@@ -439,10 +441,10 @@ test.describe('Confirm password field validation', () => {
   });
 
   test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ page }) => {
-    await registrationPage.fillConfirmPassword('Different123');
+    await registrationPage.fillConfirmPassword(INVALID_CONFIRM_PASSWORD);
     await registrationPage.confirmPasswordInput.blur();
-    expect(await registrationPage.getFieldValue('confirmPassword')).toBe('Different123');
-    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    expect(await registrationPage.getFieldValue('confirmPassword')).toBe(INVALID_CONFIRM_PASSWORD);
+    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(registrationPage.confirmPasswordError).toBeVisible();
     await expect(registrationPage.confirmPasswordError).toContainText('Passwords must match');
   });
@@ -451,7 +453,7 @@ test.describe('Confirm password field validation', () => {
     await registrationPage.confirmPasswordInput.focus();
     await registrationPage.confirmPasswordInput.blur();
     expect(await registrationPage.getFieldValue('confirmPassword')).toBe('');
-    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(registrationPage.confirmPasswordError).toBeVisible();
     await expect(registrationPage.confirmPasswordError).toContainText('Required');
   });
