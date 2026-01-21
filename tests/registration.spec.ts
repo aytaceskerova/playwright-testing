@@ -4,6 +4,12 @@ import { RegistrationPage } from '../pages/RegistrationPage';
 import { UserProfilePage } from '../pages/UserProfilePage';
 import { RegistrationData } from '../types/registration';
 
+const enum CssPattern {
+  ErrorBorderColor = 'rgb\\(2\\d{2}',
+}
+
+const ERROR_BORDER_COLOR = new RegExp(CssPattern.ErrorBorderColor);
+
 test.describe('Registration tests', () => {
   let signInPage: SignInPage;
   let registrationPage: RegistrationPage;
@@ -265,7 +271,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('Abc');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('Abc');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -274,7 +280,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('Abc@abc@abc');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('Abc@abc@abc');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -283,7 +289,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('Abc abc@abc');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('Abc abc@abc');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -292,7 +298,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('dsf()ds@ds');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('dsf()ds@ds');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -384,7 +390,7 @@ test.describe('Password field validation', () => {
     await registrationPage.fillPassword(password7);
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe(password7);
-    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(registrationPage.passwordError).toBeVisible();
     await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
   });
@@ -393,7 +399,7 @@ test.describe('Password field validation', () => {
     await registrationPage.fillPassword(password21);
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe(password21);
-    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(registrationPage.passwordError).toBeVisible();
     await expect(registrationPage.passwordError).toContainText('Maximum 20 characters');
   });
@@ -407,7 +413,6 @@ test.describe('Password field validation', () => {
 
 test.describe('Confirm password field validation', () => {
   const INVALID_CONFIRM_PASSWORD = 'Different123';
-  const ERROR_BORDER_COLOR = /rgb\(2\d{2}/;
   let registrationPage: RegistrationPage;
   let signInPage: SignInPage;
   let userProfilePage: UserProfilePage;
