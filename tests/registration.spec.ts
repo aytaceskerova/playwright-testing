@@ -4,6 +4,12 @@ import { RegistrationPage } from '../pages/RegistrationPage';
 import { UserProfilePage } from '../pages/UserProfilePage';
 import { RegistrationData } from '../types/registration';
 
+const enum CssPattern {
+  ErrorBorderColor = 'rgb\\(2\\d{2}',
+}
+
+const ERROR_BORDER_COLOR = new RegExp(CssPattern.ErrorBorderColor);
+
 test.describe('Registration tests', () => {
   let signInPage: SignInPage;
   let registrationPage: RegistrationPage;
@@ -265,7 +271,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('Abc');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('Abc');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -274,7 +280,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('Abc@abc@abc');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('Abc@abc@abc');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -283,7 +289,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('Abc abc@abc');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('Abc abc@abc');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -292,7 +298,7 @@ test.describe('Email field validation', () => {
       await registrationPage.fillEmail('dsf()ds@ds');
       await registrationPage.emailInput.blur();
       expect(await registrationPage.getFieldValue('email')).toBe('dsf()ds@ds');
-      await expect(registrationPage.emailInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+      await expect(registrationPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
       await expect(registrationPage.emailError).toBeVisible();
       await expect(registrationPage.emailError).toContainText('Invalid email address');
     });
@@ -384,7 +390,7 @@ test.describe('Password field validation', () => {
     await registrationPage.fillPassword(password7);
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe(password7);
-    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(registrationPage.passwordError).toBeVisible();
     await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
   });
@@ -393,7 +399,7 @@ test.describe('Password field validation', () => {
     await registrationPage.fillPassword(password21);
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe(password21);
-    await expect(registrationPage.passwordInput).toHaveCSS('border-color', /rgb\(2\d{2}/);
+    await expect(registrationPage.passwordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(registrationPage.passwordError).toBeVisible();
     await expect(registrationPage.passwordError).toContainText('Maximum 20 characters');
   });
@@ -402,5 +408,58 @@ test.describe('Password field validation', () => {
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe('');
     await expect(registrationPage.submitButton).toBeDisabled();
+  });
+});
+
+test.describe('Confirm password field validation', () => {
+  const INVALID_CONFIRM_PASSWORD = 'Different123';
+  let registrationPage: RegistrationPage;
+  let signInPage: SignInPage;
+  let userProfilePage: UserProfilePage;
+
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    signInPage = new SignInPage(page);
+    userProfilePage = new UserProfilePage(page);
+    await registrationPage.openRegistrationPage();
+    await registrationPage.fillFirstName('TestKai');
+    await registrationPage.fillLastName('Doe');
+    await registrationPage.fillDateOfBirth('2004-09-20');
+    await registrationPage.fillEmail(`test${Date.now()}@example.com`);
+    await registrationPage.fillPassword('TestPassword123');
+  });
+
+  test('[AQAPRACT-531] Register with equal data "Password" and "Confirm password" fields', async ({ page }) => {
+    const password = 'TestPassword123';
+    const email = await registrationPage.getFieldValue('email');
+    await test.step('Enter the same data from the field "Password" in the "Confirm password" field', async () => {
+      await registrationPage.fillConfirmPassword(password);
+      expect(await registrationPage.getFieldValue('confirmPassword')).toBe(password);
+    });
+    await test.step('Click the "Submit" button', async () => {
+      await registrationPage.clickSubmitButton();
+      await expect(page).toHaveURL(/.*login/);
+      await signInPage.signIn(email, password);
+      await userProfilePage.waitForPageLoad();
+      await expect(userProfilePage.signOut).toBeVisible();
+    });
+  });
+
+  test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ page }) => {
+    await registrationPage.fillConfirmPassword(INVALID_CONFIRM_PASSWORD);
+    await registrationPage.confirmPasswordInput.blur();
+    expect(await registrationPage.getFieldValue('confirmPassword')).toBe(INVALID_CONFIRM_PASSWORD);
+    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    await expect(registrationPage.confirmPasswordError).toBeVisible();
+    await expect(registrationPage.confirmPasswordError).toContainText('Passwords must match');
+  });
+
+  test('[AQAPRACT-533] Register with empty "Confirm password" field', async ({ page }) => {
+    await registrationPage.confirmPasswordInput.focus();
+    await registrationPage.confirmPasswordInput.blur();
+    expect(await registrationPage.getFieldValue('confirmPassword')).toBe('');
+    await expect(registrationPage.confirmPasswordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    await expect(registrationPage.confirmPasswordError).toBeVisible();
+    await expect(registrationPage.confirmPasswordError).toContainText('Required');
   });
 });
