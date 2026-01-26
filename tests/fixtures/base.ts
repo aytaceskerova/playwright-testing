@@ -3,7 +3,7 @@ import { RegistrationPage } from '../../pages/RegistrationPage';
 import { SignInPage } from '../../pages/SignInPage';
 import { UserProfilePage } from '../../pages/UserProfilePage';
 
-type Fixtures = {
+export type Fixtures = {
   registrationPage: RegistrationPage;
   signInPage: SignInPage;
   userProfilePage: UserProfilePage;

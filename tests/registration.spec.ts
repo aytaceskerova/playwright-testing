@@ -1,7 +1,4 @@
 import { test, expect } from './fixtures/base';
-import { SignInPage } from '../pages/SignInPage';
-import { RegistrationPage } from '../pages/RegistrationPage';
-import { UserProfilePage } from '../pages/UserProfilePage';
 import { RegistrationData } from '../types/registration';
 
 const enum CssPattern {
@@ -11,17 +8,7 @@ const enum CssPattern {
 const ERROR_BORDER_COLOR = new RegExp(CssPattern.ErrorBorderColor);
 
 test.describe('Registration tests', () => {
-  let signInPage: SignInPage;
-  let registrationPage: RegistrationPage;
-  let userProfilePage: UserProfilePage;
-
-  test.beforeEach(async ({ signInPage: signIn, registrationPage: registration, userProfilePage: profile }) => {
-    signInPage = signIn;
-    registrationPage = registration;
-    userProfilePage = profile;
-  });
-
-  test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page }) => {
+  test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page, signInPage, registrationPage }) => {
     await signInPage.openSignInPage();
     await signInPage.registrationLink.click();
     await expect(page).toHaveURL(/.*registration/);
@@ -32,7 +19,7 @@ test.describe('Registration tests', () => {
     await signInPage.areFieldsEmpty();
   });
 
-  test('[AQAPRACT-508] registers with valid data', async ({ page }) => {
+  test('[AQAPRACT-508] registers with valid data', async ({ page, registrationPage, signInPage, userProfilePage }) => {
     await registrationPage.openRegistrationPage();
     const data: RegistrationData = {
       firstName: 'John',
@@ -61,10 +48,7 @@ test.describe('Registration tests', () => {
 });
 
 test.describe('First name field validation', () => {
-  let registrationPage: RegistrationPage;
-
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.fillLastName('Doe');
     await registrationPage.fillDateOfBirth('2004-09-20');
@@ -73,7 +57,7 @@ test.describe('First name field validation', () => {
     await registrationPage.fillConfirmPassword('TestPassword123');
   });
 
-  test('[AQAPRACT-509] Register with max First name length (255 characters)', async ({ page }) => {
+  test('[AQAPRACT-509] Register with max First name length (255 characters)', async ({ page, registrationPage }) => {
     const firstName255 = 'a'.repeat(255);
     await registrationPage.fillFirstName(firstName255);
     expect(await registrationPage.getFieldValue('firstName')).toBe(firstName255);
@@ -82,7 +66,7 @@ test.describe('First name field validation', () => {
     await expect(page).toHaveURL(/.*login/);
   });
 
-  test('[AQAPRACT-510] Register with min \'First name\' length (1 character)', async ({ page }) => {
+  test('[AQAPRACT-510] Register with min \'First name\' length (1 character)', async ({ page, registrationPage }) => {
     await registrationPage.fillFirstName('a');
     expect(await registrationPage.getFieldValue('firstName')).toBe('a');
     await expect(registrationPage.submitButton).toBeEnabled();
@@ -90,7 +74,7 @@ test.describe('First name field validation', () => {
     await expect(page).toHaveURL(/.*login/);
   });
   
-  test('[AQAPRACT-511] Register with max+1 \'First name\' length (256 characters)', async ({ page }) => {
+  test('[AQAPRACT-511] Register with max+1 \'First name\' length (256 characters)', async ({ page, registrationPage }) => {
     const firstName256 = 'a'.repeat(256);
     await registrationPage.fillFirstName(firstName256);
     expect(await registrationPage.getFieldValue('firstName')).toBe(firstName256);
@@ -98,13 +82,13 @@ test.describe('First name field validation', () => {
     await expect(page).toHaveURL(/.*registration/);
   });
 
-  test('[AQAPRACT-512] Register with empty \'First name\' field', async ({ page }) => {
+  test('[AQAPRACT-512] Register with empty \'First name\' field', async ({ page, registrationPage }) => {
     expect(await registrationPage.getFieldValue('firstName')).toBe('');
     await expect(registrationPage.submitButton).toBeDisabled();
     await expect(page).toHaveURL(/.*registration/);
   });
 
-  test('[AQAPRACT-513] Register with spaces in \'First name\' field', async ({ page }) => {
+  test('[AQAPRACT-513] Register with spaces in \'First name\' field', async ({ page, registrationPage }) => {
     await registrationPage.fillFirstName('   ');
     expect(await registrationPage.getFieldValue('firstName')).toBe('   ');
     await registrationPage.submitButton.click();
@@ -114,10 +98,7 @@ test.describe('First name field validation', () => {
 });
 
 test.describe('Last name field validation', () => {
-  let registrationPage: RegistrationPage;
-
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillDateOfBirth('2004-09-20');
@@ -126,7 +107,7 @@ test.describe('Last name field validation', () => {
     await registrationPage.fillConfirmPassword('TestPassword123');
   });
 
-  test('[AQAPRACT-514] Register with max \'Last name\' length (255 characters)', async ({ page }) => {
+  test('[AQAPRACT-514] Register with max \'Last name\' length (255 characters)', async ({ page, registrationPage }) => {
     const lastName255 = 'a'.repeat(255);
     await registrationPage.fillLastName(lastName255);
     expect(await registrationPage.getFieldValue('lastName')).toBe(lastName255);
@@ -135,7 +116,7 @@ test.describe('Last name field validation', () => {
     await expect(page).toHaveURL(/.*login/);
   });
 
-  test('[AQAPRACT-515] Register with min "Last name" length (1 character)', async ({ page }) => {
+  test('[AQAPRACT-515] Register with min "Last name" length (1 character)', async ({ page, registrationPage }) => {
     await registrationPage.fillLastName('a');
     expect(await registrationPage.getFieldValue('lastName')).toBe('a');
     await expect(registrationPage.submitButton).toBeEnabled();
@@ -143,7 +124,7 @@ test.describe('Last name field validation', () => {
     await expect(page).toHaveURL(/.*login/);
   });
 
-  test('[AQAPRACT-516] Register with max+1 "Last name" length (256 characters)', async ({ page }) => {
+  test('[AQAPRACT-516] Register with max+1 "Last name" length (256 characters)', async ({ page, registrationPage }) => {
     const lastName256 = 'a'.repeat(256);
     await registrationPage.fillLastName(lastName256);
     expect(await registrationPage.getFieldValue('lastName')).toBe(lastName256);
@@ -151,13 +132,13 @@ test.describe('Last name field validation', () => {
     await expect(page).toHaveURL(/.*registration/);
   });
 
-  test('[AQAPRACT-517] Register with empty "Last name" field', async ({ page }) => {
+  test('[AQAPRACT-517] Register with empty "Last name" field', async ({ page, registrationPage }) => {
     expect(await registrationPage.getFieldValue('lastName')).toBe('');
     await expect(registrationPage.submitButton).toBeDisabled();
     await expect(page).toHaveURL(/.*registration/);
   });
 
-  test('[AQAPRACT-518] Register with spaces in "Last name" field', async ({ page }) => {
+  test('[AQAPRACT-518] Register with spaces in "Last name" field', async ({ page, registrationPage }) => {
     await registrationPage.fillLastName(' ');
     expect(await registrationPage.getFieldValue('lastName')).toBe(' ');
     await registrationPage.submitButton.click();
@@ -168,10 +149,7 @@ test.describe('Last name field validation', () => {
 });
 
 test.describe('Date of birth field validation', () => {
-  let registrationPage: RegistrationPage;
-
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -180,13 +158,13 @@ test.describe('Date of birth field validation', () => {
     await registrationPage.fillConfirmPassword('TestPassword123');
   });
 
-  test('[AQAPRACT-519] Register with empty "Date of birth" field', async ({ page }) => {
+  test('[AQAPRACT-519] Register with empty "Date of birth" field', async ({ page, registrationPage }) => {
     expect(await registrationPage.getFieldValue('dateOfBirth')).toBe('');
     await expect(registrationPage.submitButton).toBeDisabled();
     await expect(page).toHaveURL(/.*registration/);
   });
 
-  test('[AQAPRACT-520] The elements on the calendar picker are available', async ({ page }) => {
+  test('[AQAPRACT-520] The elements on the calendar picker are available', async ({ page, registrationPage }) => {
     await test.step('Open calendar', async () => {
       await registrationPage.dateOfBirthInput.click();
       await expect(registrationPage.calendar).toBeVisible();
@@ -232,13 +210,13 @@ test.describe('Date of birth field validation', () => {
     });
   });
 
-  test('[AQAPRACT-521] The date is filled in manually in the "Date of birth" field', async () => {
+  test('[AQAPRACT-521] The date is filled in manually in the "Date of birth" field', async ({ registrationPage }) => {
     const date = '2004-09-20';
     await registrationPage.fillDateOfBirth(date);
     expect(await registrationPage.getFieldValue('dateOfBirth')).toBe('09/20/2004');
   });
 
-  test('[AQAPRACT-522] It\'s impossible to register with the "Date of birth" in the future', async ({ page }) => {
+  test('[AQAPRACT-522] It\'s impossible to register with the "Date of birth" in the future', async ({ page, registrationPage }) => {
     const futureDate = '2999-01-01';
     await registrationPage.fillDateOfBirth(futureDate);
     await registrationPage.submitButton.click();
@@ -248,15 +226,13 @@ test.describe('Date of birth field validation', () => {
 });
 
 test.describe('Calendar validation', () => {
-  let registrationPage: RegistrationPage;
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.dateOfBirthInput.click();
     await expect(registrationPage.calendar).toBeVisible();
   });
 
-  test('[AQAPRACT-745] Month navigators switch months', async ({ page }) => {
+  test('[AQAPRACT-745] Month navigators switch months', async ({ registrationPage }) => {
     const monthBefore = await registrationPage.getSelectedMonth();
     await registrationPage.navigateCalendarPrev();
     const monthAfterPrev = await registrationPage.getSelectedMonth();
@@ -265,7 +241,7 @@ test.describe('Calendar validation', () => {
     const monthAfterNext = await registrationPage.getSelectedMonth();
     expect(monthAfterNext).toBe(monthBefore);
   });
-  test('[AQAPRACT-746] Year drop down is possible to be opened', async ({ page }) => {
+  test('[AQAPRACT-746] Year drop down is possible to be opened', async ({ registrationPage }) => {
     await test.step('Click the "Year" dropdown', async () => {
       await expect(registrationPage.calendarYearDropdown).toBeVisible();
       await registrationPage.calendarYearDropdown.click();
@@ -281,7 +257,7 @@ test.describe('Calendar validation', () => {
       expect(selectedYear).not.toBe('');
     });
   });
-  test('[AQAPRACT-747] The year is possible to be selected in the drop down', async ({ page }) => {
+  test('[AQAPRACT-747] The year is possible to be selected in the drop down', async ({ registrationPage }) => {
     await test.step('Scroll down the years', async () => {
       const yearOptions = registrationPage.calendarYearDropdown.locator('option');
       const lastIndex = (await yearOptions.count()) - 1;
@@ -296,19 +272,19 @@ test.describe('Calendar validation', () => {
     });
   });
 
-  test('[AQAPRACT-748] Month drop down is possible to be opened', async ({ page }) => {
+  test('[AQAPRACT-748] Month drop down is possible to be opened', async ({ registrationPage }) => {
     await expect(registrationPage.calendarMonthDropdown).toBeVisible();
     await registrationPage.calendarMonthDropdown.click();
     const monthOptions = registrationPage.calendarMonthDropdown.locator('option');
     const monthCount = await monthOptions.count();
     expect(monthCount).toBeGreaterThan(1);
   });
-  test('[AQAPRACT-749] The month is possible to be selected in the drop down', async ({ page }) => {
+  test('[AQAPRACT-749] The month is possible to be selected in the drop down', async ({ registrationPage }) => {
     await registrationPage.selectMonth('June');
     const selectedMonth = await registrationPage.getSelectedMonth();
     expect(selectedMonth).toBe('June');
   });
-  test('[AQAPRACT-750] The date is possible to be selected', async ({ page }) => {
+  test('[AQAPRACT-750] The date is possible to be selected', async ({ registrationPage }) => {
     await registrationPage.selectYear('2026');
     await registrationPage.selectMonth('June');
     await registrationPage.selectDay();
@@ -319,10 +295,7 @@ test.describe('Calendar validation', () => {
 });
 
 test.describe('Email field validation', () => {
-  let registrationPage: RegistrationPage;
-
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Egv');
@@ -331,13 +304,13 @@ test.describe('Email field validation', () => {
     await registrationPage.fillConfirmPassword('TestPassword123');
   });
 
-  test('[AQAPRACT-523] Register with empty "Email" field', async ({ page }) => {
+  test('[AQAPRACT-523] Register with empty "Email" field', async ({ page, registrationPage }) => {
     expect(await registrationPage.getFieldValue('email')).toBe('');
     await expect(registrationPage.submitButton).toBeDisabled();
     await expect(page).toHaveURL(/.*registration/);
   });
 
-  test('[AQAPRACT-524] Register with invalid format of email address', async ({ page }) => {
+  test('[AQAPRACT-524] Register with invalid format of email address', async ({ registrationPage }) => {
     await test.step('Input "Abc" value and focus out', async () => {
       await registrationPage.fillEmail('Abc');
       await registrationPage.emailInput.blur();
@@ -375,7 +348,7 @@ test.describe('Email field validation', () => {
     });
   });
 
-  test('[AQAPRACT-525] Register with already existed email', async ({ page }) => {
+  test('[AQAPRACT-525] Register with already existed email', async ({ page, registrationPage }) => {
     const existingEmail = `existing${Date.now()}@example.com`;
     await test.step('Register user with email', async () => {
       await registrationPage.fillEmail(existingEmail);
@@ -403,14 +376,7 @@ test.describe('Email field validation', () => {
 });
 
 test.describe('Password field validation', () => {
-  let registrationPage: RegistrationPage;
-  let signInPage: SignInPage;
-  let userProfilePage: UserProfilePage;
-
-  test.beforeEach(async ({ registrationPage: registration, signInPage: signIn, userProfilePage: profile }) => {
-    registrationPage = registration;
-    signInPage = signIn;
-    userProfilePage = profile;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -418,7 +384,7 @@ test.describe('Password field validation', () => {
     await registrationPage.fillEmail(`test${Date.now()}@example.com`);
   });
 
-  test('[AQAPRACT-526] Register with min \'Password\' length (8 characters)', async ({ page }) => {
+  test('[AQAPRACT-526] Register with min \'Password\' length (8 characters)', async ({ page, registrationPage, signInPage, userProfilePage }) => {
     const password8 = 'Test1234';
     const email = await registrationPage.getFieldValue('email');
     await test.step('Enter 8 characters in "Password" field', async () => {
@@ -437,7 +403,7 @@ test.describe('Password field validation', () => {
       await expect(userProfilePage.signOut).toBeVisible();
     });
   });
-  test('[AQAPRACT-527] Register with max "Password" length (20 characters)', async ({ page }) => {
+  test('[AQAPRACT-527] Register with max "Password" length (20 characters)', async ({ page, registrationPage, signInPage, userProfilePage }) => {
     const password20 = 'TestPassword123456';
     const email = await registrationPage.getFieldValue('email');
     await test.step('Enter 20 characters to the "Password" field', async () => {
@@ -456,7 +422,7 @@ test.describe('Password field validation', () => {
       await expect(userProfilePage.signOut).toBeVisible();
     });
   });
-  test('[AQAPRACT-528] Register with min-1 "Password" length (7 characters)', async ({ page }) => {
+  test('[AQAPRACT-528] Register with min-1 "Password" length (7 characters)', async ({ registrationPage }) => {
     const password7 = 'Test123';
     await registrationPage.fillPassword(password7);
     await registrationPage.passwordInput.blur();
@@ -465,7 +431,7 @@ test.describe('Password field validation', () => {
     await expect(registrationPage.passwordError).toBeVisible();
     await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
   });
-  test('[AQAPRACT-529] Register with max+1 "Password" length (21 characters)', async ({ page }) => {
+  test('[AQAPRACT-529] Register with max+1 "Password" length (21 characters)', async ({ registrationPage }) => {
     const password21 = 'Password12345678901234';
     await registrationPage.fillPassword(password21);
     await registrationPage.passwordInput.blur();
@@ -474,7 +440,7 @@ test.describe('Password field validation', () => {
     await expect(registrationPage.passwordError).toBeVisible();
     await expect(registrationPage.passwordError).toContainText('Maximum 20 characters');
   });
-  test('[AQAPRACT-530] Register with empty "Password" field', async ({ page }) => {
+  test('[AQAPRACT-530] Register with empty "Password" field', async ({ registrationPage }) => {
     await registrationPage.passwordInput.focus();
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe('');
@@ -484,14 +450,7 @@ test.describe('Password field validation', () => {
 
 test.describe('Confirm password field validation', () => {
   const INVALID_CONFIRM_PASSWORD = 'Different123';
-  let registrationPage: RegistrationPage;
-  let signInPage: SignInPage;
-  let userProfilePage: UserProfilePage;
-
-  test.beforeEach(async ({ registrationPage: registration, signInPage: signIn, userProfilePage: profile }) => {
-    registrationPage = registration;
-    signInPage = signIn;
-    userProfilePage = profile;
+  test.beforeEach(async ({ registrationPage }) => {
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -500,7 +459,7 @@ test.describe('Confirm password field validation', () => {
     await registrationPage.fillPassword('TestPassword123');
   });
 
-  test('[AQAPRACT-531] Register with equal data "Password" and "Confirm password" fields', async ({ page }) => {
+  test('[AQAPRACT-531] Register with equal data "Password" and "Confirm password" fields', async ({ page, registrationPage, signInPage, userProfilePage }) => {
     const password = 'TestPassword123';
     const email = await registrationPage.getFieldValue('email');
     await test.step('Enter the same data from the field "Password" in the "Confirm password" field', async () => {
@@ -516,7 +475,7 @@ test.describe('Confirm password field validation', () => {
     });
   });
 
-  test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ page }) => {
+  test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ registrationPage }) => {
     await registrationPage.fillConfirmPassword(INVALID_CONFIRM_PASSWORD);
     await registrationPage.confirmPasswordInput.blur();
     expect(await registrationPage.getFieldValue('confirmPassword')).toBe(INVALID_CONFIRM_PASSWORD);
@@ -525,7 +484,7 @@ test.describe('Confirm password field validation', () => {
     await expect(registrationPage.confirmPasswordError).toContainText('Passwords must match');
   });
 
-  test('[AQAPRACT-533] Register with empty "Confirm password" field', async ({ page }) => {
+  test('[AQAPRACT-533] Register with empty "Confirm password" field', async ({ registrationPage }) => {
     await registrationPage.confirmPasswordInput.focus();
     await registrationPage.confirmPasswordInput.blur();
     expect(await registrationPage.getFieldValue('confirmPassword')).toBe('');
