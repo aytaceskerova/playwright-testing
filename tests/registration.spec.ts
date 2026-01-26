@@ -1,4 +1,4 @@
-import { test, expect } from './fixtures/base';
+import { test, expect } from '@playwright/test';
 import { SignInPage } from '../pages/SignInPage';
 import { RegistrationPage } from '../pages/RegistrationPage';
 import { UserProfilePage } from '../pages/UserProfilePage';
@@ -15,10 +15,10 @@ test.describe('Registration tests', () => {
   let registrationPage: RegistrationPage;
   let userProfilePage: UserProfilePage;
 
-  test.beforeEach(async ({ signInPage: signIn, registrationPage: registration, userProfilePage: profile }) => {
-    signInPage = signIn;
-    registrationPage = registration;
-    userProfilePage = profile;
+  test.beforeEach(async ({ page }) => {
+    signInPage = new SignInPage(page);
+    registrationPage = new RegistrationPage(page);
+    userProfilePage = new UserProfilePage(page);
   });
 
   test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page }) => {
@@ -63,8 +63,8 @@ test.describe('Registration tests', () => {
 test.describe('First name field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillLastName('Doe');
     await registrationPage.fillDateOfBirth('2004-09-20');
@@ -116,8 +116,8 @@ test.describe('First name field validation', () => {
 test.describe('Last name field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillDateOfBirth('2004-09-20');
@@ -170,8 +170,8 @@ test.describe('Last name field validation', () => {
 test.describe('Date of birth field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -249,8 +249,9 @@ test.describe('Date of birth field validation', () => {
 
 test.describe('Calendar validation', () => {
   let registrationPage: RegistrationPage;
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.dateOfBirthInput.click();
     await expect(registrationPage.calendar).toBeVisible();
@@ -265,6 +266,7 @@ test.describe('Calendar validation', () => {
     const monthAfterNext = await registrationPage.getSelectedMonth();
     expect(monthAfterNext).toBe(monthBefore);
   });
+
   test('[AQAPRACT-746] Year drop down is possible to be opened', async ({ page }) => {
     await test.step('Click the "Year" dropdown', async () => {
       await expect(registrationPage.calendarYearDropdown).toBeVisible();
@@ -321,8 +323,8 @@ test.describe('Calendar validation', () => {
 test.describe('Email field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ registrationPage: registration }) => {
-    registrationPage = registration;
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Egv');
@@ -407,10 +409,10 @@ test.describe('Password field validation', () => {
   let signInPage: SignInPage;
   let userProfilePage: UserProfilePage;
 
-  test.beforeEach(async ({ registrationPage: registration, signInPage: signIn, userProfilePage: profile }) => {
-    registrationPage = registration;
-    signInPage = signIn;
-    userProfilePage = profile;
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    signInPage = new SignInPage(page);
+    userProfilePage = new UserProfilePage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -488,10 +490,10 @@ test.describe('Confirm password field validation', () => {
   let signInPage: SignInPage;
   let userProfilePage: UserProfilePage;
 
-  test.beforeEach(async ({ registrationPage: registration, signInPage: signIn, userProfilePage: profile }) => {
-    registrationPage = registration;
-    signInPage = signIn;
-    userProfilePage = profile;
+  test.beforeEach(async ({ page }) => {
+    registrationPage = new RegistrationPage(page);
+    signInPage = new SignInPage(page);
+    userProfilePage = new UserProfilePage(page);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
