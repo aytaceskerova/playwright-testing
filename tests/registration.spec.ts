@@ -1,4 +1,4 @@
-import { test, expect } from '@playwright/test';
+import { test, expect } from './fixtures/base';
 import { SignInPage } from '../pages/SignInPage';
 import { RegistrationPage } from '../pages/RegistrationPage';
 import { UserProfilePage } from '../pages/UserProfilePage';
@@ -15,10 +15,10 @@ test.describe('Registration tests', () => {
   let registrationPage: RegistrationPage;
   let userProfilePage: UserProfilePage;
 
-  test.beforeEach(async ({ page }) => {
-    signInPage = new SignInPage(page);
-    registrationPage = new RegistrationPage(page);
-    userProfilePage = new UserProfilePage(page);
+  test.beforeEach(async ({ signInPage: signIn, registrationPage: registration, userProfilePage: profile }) => {
+    signInPage = signIn;
+    registrationPage = registration;
+    userProfilePage = profile;
   });
 
   test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page }) => {
@@ -63,8 +63,8 @@ test.describe('Registration tests', () => {
 test.describe('First name field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ page }) => {
-    registrationPage = new RegistrationPage(page);
+  test.beforeEach(async ({ registrationPage: registration }) => {
+    registrationPage = registration;
     await registrationPage.openRegistrationPage();
     await registrationPage.fillLastName('Doe');
     await registrationPage.fillDateOfBirth('2004-09-20');
@@ -116,8 +116,8 @@ test.describe('First name field validation', () => {
 test.describe('Last name field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ page }) => {
-    registrationPage = new RegistrationPage(page);
+  test.beforeEach(async ({ registrationPage: registration }) => {
+    registrationPage = registration;
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillDateOfBirth('2004-09-20');
@@ -170,8 +170,8 @@ test.describe('Last name field validation', () => {
 test.describe('Date of birth field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ page }) => {
-    registrationPage = new RegistrationPage(page);
+  test.beforeEach(async ({ registrationPage: registration }) => {
+    registrationPage = registration;
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -247,11 +247,82 @@ test.describe('Date of birth field validation', () => {
   });
 });
 
+test.describe('Calendar validation', () => {
+  let registrationPage: RegistrationPage;
+  test.beforeEach(async ({ registrationPage: registration }) => {
+    registrationPage = registration;
+    await registrationPage.openRegistrationPage();
+    await registrationPage.dateOfBirthInput.click();
+    await expect(registrationPage.calendar).toBeVisible();
+  });
+
+  test('[AQAPRACT-745] Month navigators switch months', async ({ page }) => {
+    const monthBefore = await registrationPage.getSelectedMonth();
+    await registrationPage.navigateCalendarPrev();
+    const monthAfterPrev = await registrationPage.getSelectedMonth();
+    expect(monthAfterPrev).not.toBe(monthBefore);
+    await registrationPage.navigateCalendarNext();
+    const monthAfterNext = await registrationPage.getSelectedMonth();
+    expect(monthAfterNext).toBe(monthBefore);
+  });
+  test('[AQAPRACT-746] Year drop down is possible to be opened', async ({ page }) => {
+    await test.step('Click the "Year" dropdown', async () => {
+      await expect(registrationPage.calendarYearDropdown).toBeVisible();
+      await registrationPage.calendarYearDropdown.click();
+      const yearOptions = registrationPage.calendarYearDropdown.locator('option');
+      const yearCount = await yearOptions.count();
+      expect(yearCount).toBeGreaterThan(1);
+    });
+    await test.step('Scroll down the list', async () => {
+      const yearOptions = registrationPage.calendarYearDropdown.locator('option');
+      const lastIndex = (await yearOptions.count()) - 1;
+      await registrationPage.calendarYearDropdown.selectOption({ index: lastIndex });
+      const selectedYear = await registrationPage.getSelectedYear();
+      expect(selectedYear).not.toBe('');
+    });
+  });
+  test('[AQAPRACT-747] The year is possible to be selected in the drop down', async ({ page }) => {
+    await test.step('Scroll down the years', async () => {
+      const yearOptions = registrationPage.calendarYearDropdown.locator('option');
+      const lastIndex = (await yearOptions.count()) - 1;
+      await registrationPage.calendarYearDropdown.selectOption({ index: lastIndex });
+      const selectedYear = await registrationPage.getSelectedYear();
+      expect(selectedYear).not.toBe('');
+    });
+    await test.step('Select any year', async () => {
+      await registrationPage.selectYear('2026');
+      const selectedYear = await registrationPage.getSelectedYear();
+      expect(selectedYear).toBe('2026');
+    });
+  });
+
+  test('[AQAPRACT-748] Month drop down is possible to be opened', async ({ page }) => {
+    await expect(registrationPage.calendarMonthDropdown).toBeVisible();
+    await registrationPage.calendarMonthDropdown.click();
+    const monthOptions = registrationPage.calendarMonthDropdown.locator('option');
+    const monthCount = await monthOptions.count();
+    expect(monthCount).toBeGreaterThan(1);
+  });
+  test('[AQAPRACT-749] The month is possible to be selected in the drop down', async ({ page }) => {
+    await registrationPage.selectMonth('June');
+    const selectedMonth = await registrationPage.getSelectedMonth();
+    expect(selectedMonth).toBe('June');
+  });
+  test('[AQAPRACT-750] The date is possible to be selected', async ({ page }) => {
+    await registrationPage.selectYear('2026');
+    await registrationPage.selectMonth('June');
+    await registrationPage.selectDay();
+    const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
+    expect(dateOfBirthValue).not.toBe('');
+    await expect(registrationPage.calendar).not.toBeVisible();
+  });
+});
+
 test.describe('Email field validation', () => {
   let registrationPage: RegistrationPage;
 
-  test.beforeEach(async ({ page }) => {
-    registrationPage = new RegistrationPage(page);
+  test.beforeEach(async ({ registrationPage: registration }) => {
+    registrationPage = registration;
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Egv');
@@ -336,10 +407,10 @@ test.describe('Password field validation', () => {
   let signInPage: SignInPage;
   let userProfilePage: UserProfilePage;
 
-  test.beforeEach(async ({ page }) => {
-    registrationPage = new RegistrationPage(page);
-    signInPage = new SignInPage(page);
-    userProfilePage = new UserProfilePage(page);
+  test.beforeEach(async ({ registrationPage: registration, signInPage: signIn, userProfilePage: profile }) => {
+    registrationPage = registration;
+    signInPage = signIn;
+    userProfilePage = profile;
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
@@ -417,10 +488,10 @@ test.describe('Confirm password field validation', () => {
   let signInPage: SignInPage;
   let userProfilePage: UserProfilePage;
 
-  test.beforeEach(async ({ page }) => {
-    registrationPage = new RegistrationPage(page);
-    signInPage = new SignInPage(page);
-    userProfilePage = new UserProfilePage(page);
+  test.beforeEach(async ({ registrationPage: registration, signInPage: signIn, userProfilePage: profile }) => {
+    registrationPage = registration;
+    signInPage = signIn;
+    userProfilePage = profile;
     await registrationPage.openRegistrationPage();
     await registrationPage.fillFirstName('TestKai');
     await registrationPage.fillLastName('Doe');
