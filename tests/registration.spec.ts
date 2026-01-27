@@ -1,9 +1,6 @@
 import { test, expect } from './fixtures/base';
 import { RegistrationData } from '../types/registration';
-const enum CssPattern {
-  ErrorBorderColor = 'rgb\\(2\\d{2}',
-}
-const ERROR_BORDER_COLOR = new RegExp(CssPattern.ErrorBorderColor);
+import { ERROR_BORDER_COLOR } from './test-data/auth';
 
 test.describe('Registration tests', () => {
   test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page, signInPage, registrationPage }) => {
@@ -409,7 +406,7 @@ test.describe('Password field validation', () => {
     });
     await test.step('Click the "Submit" button', async () => {
       await registrationPage.clickSubmitButton();
-      await expect(page).toHaveURL(/.*login/);
+    await expect(page).toHaveURL(/.*login/);
       await signInPage.signIn(email, password20);
       await userProfilePage.waitForPageLoad();
       await expect(userProfilePage.signOut).toBeVisible();
@@ -464,10 +461,10 @@ test.describe('Confirm password field validation', () => {
       await registrationPage.clickSubmitButton();
       await expect(page).toHaveURL(/.*login/);
       await signInPage.signIn(email, password);
-      await userProfilePage.waitForPageLoad();
+    await userProfilePage.waitForPageLoad();
       await expect(userProfilePage.signOut).toBeVisible();
-    });
   });
+});
 
   test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ page, registrationPage }) => {
     await registrationPage.fillConfirmPassword(INVALID_CONFIRM_PASSWORD);

@@ -1,26 +1,20 @@
 import { test, expect } from './fixtures/base';
 import { RegistrationData } from '../types/registration';
-const enum CssPattern {
-  ErrorBorderColor = 'rgb\\(2\\d{2}',
-}
-const ERROR_BORDER_COLOR = new RegExp(CssPattern.ErrorBorderColor);
-const PASSWORD_MIN = 'Test1234';
-const PASSWORD_MIN_MINUS = 'Test123';
-const PASSWORD_MAX = 'A'.repeat(20);
-const PASSWORD_MAX_PLUS = 'A'.repeat(21);
+import {
+  createRegistrationData,
+  createValidUser,
+  ERROR_BORDER_COLOR,
+  PasswordTestData,
+  SignInUser,
+} from './test-data/auth';
 
 test.describe('Sign in / Email field validation', () => {
   let registeredUser: RegistrationData;
+  let validUser: SignInUser;
 
   test.beforeEach(async ({ page, registrationPage, signInPage }) => {
-    registeredUser = {
-      firstName: 'Ai',
-      lastName: 'kai',
-      dateOfBirth: '2000-01-15',
-      email: `test${Date.now()}@example.com`,
-      password: 'TestPassword123',
-      confirmPassword: 'TestPassword123',
-    };
+    validUser = createValidUser();
+    registeredUser = createRegistrationData(validUser);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.clickSubmitButton();
@@ -47,16 +41,11 @@ test.describe('Sign in / Email field validation', () => {
 
 test.describe('Sign in / Password field validation', () => {
   let registeredUser: RegistrationData;
+  let validUser: SignInUser;
 
   test.beforeEach(async ({ page, registrationPage }) => {
-    registeredUser = {
-      firstName: 'Ai',
-      lastName: 'Kai',
-      dateOfBirth: '2000-01-15',
-      email: `test${Date.now()}@example.com`,
-      password: 'TestPassword123',
-      confirmPassword: 'TestPassword123',
-    };
+    validUser = createValidUser();
+    registeredUser = createRegistrationData(validUser);
     await registrationPage.openRegistrationPage();
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.clickSubmitButton();
@@ -79,8 +68,8 @@ test.describe('Sign in / Password field validation', () => {
     });
   });
   test('[AQAPRACT-541] Validation of "Password" on min length (8 characters)', async ({ signInPage }) => {
-    await signInPage.fillPassword(PASSWORD_MIN);
-    expect(await signInPage.passwordInput.inputValue()).toBe(PASSWORD_MIN);
+    await signInPage.fillPassword(PasswordTestData.Min);
+    expect(await signInPage.passwordInput.inputValue()).toBe(PasswordTestData.Min);
     await expect(signInPage.passwordInput).toHaveAttribute('type', 'password');
     await expect(signInPage.passwordError).toHaveCount(0);
   });
@@ -91,26 +80,26 @@ test.describe('Sign in / Password field validation', () => {
       expect(await signInPage.emailInput.inputValue()).toBe(registeredUser.email);
     });
     await test.step('Enter 20 characters in the "Password" field', async () => {
-      await signInPage.fillPassword(PASSWORD_MAX);
-      expect(await signInPage.passwordInput.inputValue()).toBe(PASSWORD_MAX);
+      await signInPage.fillPassword(PasswordTestData.Max);
+      expect(await signInPage.passwordInput.inputValue()).toBe(PasswordTestData.Max);
       await expect(signInPage.passwordError).toHaveCount(0);
       await expect(signInPage.signInButton).toBeEnabled();
     });
   });
 
   test('[AQAPRACT-543] Validation of "Password" on 7 characters', async ({ signInPage }) => {
-    await signInPage.fillPassword(PASSWORD_MIN_MINUS);
+    await signInPage.fillPassword(PasswordTestData.MinMinus);
     await signInPage.passwordInput.blur();
-    expect(await signInPage.passwordInput.inputValue()).toBe(PASSWORD_MIN_MINUS);
+    expect(await signInPage.passwordInput.inputValue()).toBe(PasswordTestData.MinMinus);
     await expect(signInPage.passwordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(signInPage.passwordError).toBeVisible();
     await expect(signInPage.passwordError).toContainText('Minimum 8 characters');
   });
 
   test('[AQAPRACT-544] Validation of "Password" on 21 chacacters', async ({ signInPage }) => {
-    await signInPage.fillPassword(PASSWORD_MAX_PLUS);
+    await signInPage.fillPassword(PasswordTestData.MaxPlus);
     await signInPage.passwordInput.blur();
-    expect(await signInPage.passwordInput.inputValue()).toBe(PASSWORD_MAX_PLUS);
+    expect(await signInPage.passwordInput.inputValue()).toBe(PasswordTestData.MaxPlus);
     await expect(signInPage.passwordInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
     await expect(signInPage.passwordError).toBeVisible();
     await expect(signInPage.passwordError).toContainText('Maximum 20 characters');
