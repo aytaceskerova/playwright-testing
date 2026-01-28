@@ -1,6 +1,8 @@
 import { test, expect } from './fixtures/base';
 import { RegistrationData } from '../types/registration';
-import { ERROR_BORDER_COLOR } from './test-data/auth';
+import { RegistrationTestData } from '../data/registrationData';
+import { ERROR_BORDER_COLOR } from '../enums/cssPatterns';
+import { PasswordTestData } from '../enums/passwordTestData';
 
 test.describe('Registration tests', () => {
   test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ page, signInPage, registrationPage }) => {
@@ -16,14 +18,7 @@ test.describe('Registration tests', () => {
 
   test('[AQAPRACT-508] registers with valid data', async ({ page, registrationPage, signInPage, userProfilePage }) => {
     await registrationPage.openRegistrationPage();
-    const data: RegistrationData = {
-      firstName: 'John',
-      lastName: 'Doe',
-      dateOfBirth: '1990-01-15',
-      email: `test${Date.now()}@example.com`,
-      password: 'TestPassword123',
-      confirmPassword: 'TestPassword123',
-    };
+    const data: RegistrationData = new RegistrationTestData();
 
     await registrationPage.fillAllFields(data);
     expect(await registrationPage.getFieldValue('firstName')).toBe(data.firstName);
@@ -375,7 +370,7 @@ test.describe('Password field validation', () => {
     await registrationPage.fillEmail(`test${Date.now()}@example.com`);
   });
   test('[AQAPRACT-526] Register with min \'Password\' length (8 characters)', async ({ page, registrationPage, signInPage, userProfilePage }) => {
-    const password8 = 'Test1234';
+    const password8 = PasswordTestData.Min;
     const email = await registrationPage.getFieldValue('email');
     await test.step('Enter 8 characters in "Password" field', async () => {
       await registrationPage.fillPassword(password8);
@@ -394,7 +389,7 @@ test.describe('Password field validation', () => {
     });
   });
   test('[AQAPRACT-527] Register with max "Password" length (20 characters)', async ({ page, registrationPage, signInPage, userProfilePage }) => {
-    const password20 = 'TestPassword123456';
+    const password20 = PasswordTestData.Max;
     const email = await registrationPage.getFieldValue('email');
     await test.step('Enter 20 characters to the "Password" field', async () => {
       await registrationPage.fillPassword(password20);
@@ -413,7 +408,7 @@ test.describe('Password field validation', () => {
     });
   });
   test('[AQAPRACT-528] Register with min-1 "Password" length (7 characters)', async ({ page, registrationPage }) => {
-    const password7 = 'Test123';
+    const password7 = PasswordTestData.MinMinus;
     await registrationPage.fillPassword(password7);
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe(password7);
@@ -422,7 +417,7 @@ test.describe('Password field validation', () => {
     await expect(registrationPage.passwordError).toContainText('Minimum 8 characters');
   });
   test('[AQAPRACT-529] Register with max+1 "Password" length (21 characters)', async ({ page, registrationPage }) => {
-    const password21 = 'Password12345678901234';
+    const password21 = PasswordTestData.MaxPlus;
     await registrationPage.fillPassword(password21);
     await registrationPage.passwordInput.blur();
     expect(await registrationPage.getFieldValue('password')).toBe(password21);

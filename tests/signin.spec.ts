@@ -1,27 +1,18 @@
 import { test, expect } from './fixtures/base';
 import { RegistrationData } from '../types/registration';
-import {
-  createRegistrationData,
-  createValidUser,
-  ERROR_BORDER_COLOR,
-  PasswordTestData,
-  SignInUser,
-} from './test-data/auth';
-
+import { RegistrationTestData } from '../data/registrationData';
+import { ERROR_BORDER_COLOR } from '../enums/cssPatterns';
+import { PasswordTestData } from '../enums/passwordTestData';
 test.describe('Sign in / Email field validation', () => {
   let registeredUser: RegistrationData;
-  let validUser: SignInUser;
-
   test.beforeEach(async ({ page, registrationPage, signInPage }) => {
-    validUser = createValidUser();
-    registeredUser = createRegistrationData(validUser);
+    registeredUser = new RegistrationTestData();
     await registrationPage.openRegistrationPage();
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.clickSubmitButton();
     await expect(page).toHaveURL(/.*login/);
     await signInPage.areFieldsEmpty();
   });
-
   test('[AQAPRACT-539] Validation of empty "Email" field on "Sign in" page', async ({ signInPage }) => {
     await test.step('Leave the "Email" field empty', async () => {
       await signInPage.emailInput.focus();
@@ -41,11 +32,8 @@ test.describe('Sign in / Email field validation', () => {
 
 test.describe('Sign in / Password field validation', () => {
   let registeredUser: RegistrationData;
-  let validUser: SignInUser;
-
   test.beforeEach(async ({ page, registrationPage }) => {
-    validUser = createValidUser();
-    registeredUser = createRegistrationData(validUser);
+    registeredUser = new RegistrationTestData();
     await registrationPage.openRegistrationPage();
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.clickSubmitButton();
