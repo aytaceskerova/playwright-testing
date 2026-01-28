@@ -401,7 +401,7 @@ test.describe('Password field validation', () => {
     });
     await test.step('Click the "Submit" button', async () => {
       await registrationPage.clickSubmitButton();
-    await expect(page).toHaveURL(/.*login/);
+      await expect(page).toHaveURL(/.*login/);
       await signInPage.signIn(email, password20);
       await userProfilePage.waitForPageLoad();
       await expect(userProfilePage.signOut).toBeVisible();
@@ -456,10 +456,10 @@ test.describe('Confirm password field validation', () => {
       await registrationPage.clickSubmitButton();
       await expect(page).toHaveURL(/.*login/);
       await signInPage.signIn(email, password);
-    await userProfilePage.waitForPageLoad();
+      await userProfilePage.waitForPageLoad();
       await expect(userProfilePage.signOut).toBeVisible();
+    });
   });
-});
 
   test('[AQAPRACT-532] Register with different data in "Password" and "Confirm password" fields', async ({ page, registrationPage }) => {
     await registrationPage.fillConfirmPassword(INVALID_CONFIRM_PASSWORD);
