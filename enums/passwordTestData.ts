@@ -3,4 +3,5 @@ export const enum PasswordTestData {
   MinMinus = 'Test123',
   Max = 'AAAAAAAAAAAAAAAAAAAA',
   MaxPlus = 'AAAAAAAAAAAAAAAAAAAAA',
+  Invalid = 'WrongPassword123',
 }

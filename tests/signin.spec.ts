@@ -3,6 +3,49 @@ import { RegistrationData } from '../types/registration';
 import { RegistrationTestData } from '../data/registrationData';
 import { ERROR_BORDER_COLOR } from '../enums/cssPatterns';
 import { PasswordTestData } from '../enums/passwordTestData';
+
+test.describe('Sign in/ Credentials validation', () => {
+  let registeredUser: RegistrationData;
+  test.beforeEach(async ({ page, registrationPage, signInPage }) => {
+    registeredUser = new RegistrationTestData();
+    await registrationPage.openRegistrationPage();
+    await registrationPage.fillAllFields(registeredUser);
+    await registrationPage.clickSubmitButton();
+    await expect(page).toHaveURL(/.*login/);
+    await signInPage.areFieldsEmpty();
+  });
+  test('[AQAPRACT-534] Sign in with valid email and password', async ({ signInPage, userProfilePage }) => {
+    await signInPage.signIn(registeredUser.email, registeredUser.password);
+    await userProfilePage.waitForPageLoad();
+    await expect(userProfilePage.signOut).toBeVisible();
+  });
+  test('[AQAPRACT-535] Sign in with invalid email and valid password', async ({ page, signInPage }) => {
+    const invalidEmail = `not-registered-${Date.now()}@example.com`;
+    await signInPage.signIn(invalidEmail, registeredUser.password);
+    await expect(page).toHaveURL(/.*login/);
+    await expect(signInPage.signInError).toBeVisible();
+  });
+  test('[AQAPRACT-536] Sign in with valid email and invalid password', async ({ page, signInPage }) => {
+    await signInPage.signIn(registeredUser.email, PasswordTestData.Invalid);
+    await expect(page).toHaveURL(/.*login/);
+    await expect(signInPage.signInError).toBeVisible();
+  });
+  test('[AQAPRACT-537] Sign in with invalid email and password', async ({ page, signInPage }) => {
+    const invalidEmail = `not-registered-${Date.now()}@example.com`;
+    await signInPage.signIn(invalidEmail, PasswordTestData.Invalid);
+    await expect(page).toHaveURL(/.*login/);
+    await expect(signInPage.signInError).toBeVisible();
+  });
+  test('[AQAPRACT-538] Sign in with email address with invalid format', async ({ signInPage }) => {
+    await signInPage.fillEmail('Abc');
+    await signInPage.emailInput.blur();
+    expect(await signInPage.emailInput.inputValue()).toBe('Abc');
+    await expect(signInPage.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    await expect(signInPage.emailError).toBeVisible();
+    await expect(signInPage.emailError).toContainText('Invalid email address');
+    await expect(signInPage.signInButton).toBeDisabled();
+  });
+});
 test.describe('Sign in / Email field validation', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ page, registrationPage, signInPage }) => {
@@ -29,7 +72,6 @@ test.describe('Sign in / Email field validation', () => {
     });
   });
 });
-
 test.describe('Sign in / Password field validation', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ page, registrationPage }) => {
@@ -39,7 +81,6 @@ test.describe('Sign in / Password field validation', () => {
     await registrationPage.clickSubmitButton();
     await expect(page).toHaveURL(/.*login/);
   });
-
   test('[AQAPRACT-540] Validation of empty "Password" field on sign in page', async ({ signInPage }) => {
     await test.step('Enter the valid email in the "Email" field', async () => {
       await signInPage.fillEmail(registeredUser.email);
@@ -61,7 +102,6 @@ test.describe('Sign in / Password field validation', () => {
     await expect(signInPage.passwordInput).toHaveAttribute('type', 'password');
     await expect(signInPage.passwordError).toHaveCount(0);
   });
-
   test('[AQAPRACT-542] Validation of "Password" on max length (20 characters)', async ({ signInPage }) => {
     await test.step('Enter the valid email in the "Email" field', async () => {
       await signInPage.fillEmail(registeredUser.email);
@@ -74,7 +114,6 @@ test.describe('Sign in / Password field validation', () => {
       await expect(signInPage.signInButton).toBeEnabled();
     });
   });
-
   test('[AQAPRACT-543] Validation of "Password" on 7 characters', async ({ signInPage }) => {
     await signInPage.fillPassword(PasswordTestData.MinMinus);
     await signInPage.passwordInput.blur();
@@ -83,7 +122,6 @@ test.describe('Sign in / Password field validation', () => {
     await expect(signInPage.passwordError).toBeVisible();
     await expect(signInPage.passwordError).toContainText('Minimum 8 characters');
   });
-
   test('[AQAPRACT-544] Validation of "Password" on 21 chacacters', async ({ signInPage }) => {
     await signInPage.fillPassword(PasswordTestData.MaxPlus);
     await signInPage.passwordInput.blur();
