@@ -7,6 +7,8 @@ export class SignInPage extends BasePage {
   readonly signInButton: Locator;
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
+  readonly emailError: Locator;
+  readonly passwordError: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -15,6 +17,8 @@ export class SignInPage extends BasePage {
     this.signInButton = page.locator('button', { hasText: 'Sign in' });
     this.emailInput = page.locator('input[name="email"]');
     this.passwordInput = page.locator('input[name="password"]');
+    this.emailError = page.locator('//label[input[@name="email"]]/following-sibling::div[1]/span');
+    this.passwordError = page.locator('//label[input[@name="password"]]/following-sibling::div[1]/span');
   }
 
   async openSignInPage(): Promise<void> {

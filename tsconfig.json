@@ -14,7 +14,10 @@
     "types": ["node", "@playwright/test"]
   },
   "include": [
-    "**/*.ts"
+    "**/*.ts",
+    "data/**/*.ts",
+    "enums/**/*.ts",
+    "types/**/*.ts"
   ],
   "exclude": [
     "node_modules",
