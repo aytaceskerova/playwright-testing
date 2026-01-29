@@ -26,15 +26,13 @@ test.describe('Sign in/ Credentials validation', () => {
     await expect(signInPage.signInError).toBeVisible();
   });
   test('[AQAPRACT-536] Sign in with valid email and invalid password', async ({ page, signInPage }) => {
-    const invalidPassword = 'WrongPassword123';
-    await signInPage.signIn(registeredUser.email, invalidPassword);
+    await signInPage.signIn(registeredUser.email, PasswordTestData.Invalid);
     await expect(page).toHaveURL(/.*login/);
     await expect(signInPage.signInError).toBeVisible();
   });
   test('[AQAPRACT-537] Sign in with invalid email and password', async ({ page, signInPage }) => {
     const invalidEmail = `not-registered-${Date.now()}@example.com`;
-    const invalidPassword = 'WrongPassword123';
-    await signInPage.signIn(invalidEmail, invalidPassword);
+    await signInPage.signIn(invalidEmail, PasswordTestData.Invalid);
     await expect(page).toHaveURL(/.*login/);
     await expect(signInPage.signInError).toBeVisible();
   });
