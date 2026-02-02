@@ -55,12 +55,15 @@ export class UserProfilePage extends BasePage {
     await this.page.waitForLoadState('networkidle');
     await expect(this.signOut).toBeVisible();
   }
+
   getProfileValue(labelText: string): Locator {
     return this.page.getByText(labelText, { exact: true }).locator('xpath=following-sibling::div[1]');
   }
+
   getAqaPracticeOption(optionText: string): Locator {
     return this.page.getByText(optionText, { exact: true });
   }
+
   async openAqaPracticeDropdown(): Promise<void> {
     await this.aqaPracticeButton.click();
   }
