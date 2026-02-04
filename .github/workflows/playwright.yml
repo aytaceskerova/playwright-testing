@@ -6,13 +6,22 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   test:
     timeout-minutes: 60
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/setup-node@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: lts/*
       - name: Install dependencies
@@ -27,3 +36,17 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      - name: Upload Playwright report to Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playwright-report/
+
+  deploy:
+    needs: test
+    if: ${{ github.event_name == 'push' && (success() || failure()) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
