@@ -6,6 +6,16 @@ on:
   pull_request:
     branches: [ main, master ]
 
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+  pull-requests: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
 jobs:
   test:
     timeout-minutes: 60
@@ -27,3 +37,34 @@ jobs:
           name: playwright-report
           path: playwright-report/
           retention-days: 30
+      - name: Upload Playwright report to Pages artifact
+        if: always()
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: playwright-report/
+
+  deploy:
+    needs: test
+    if: ${{ (github.event_name == 'push' || github.event_name == 'pull_request') && (success() || failure()) }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy report to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+      - name: Comment report link on PR
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        env:
+          REPORT_URL: ${{ steps.deployment.outputs.page_url }}
+        with:
+          script: |
+            const reportUrl = process.env.REPORT_URL;
+            const { owner, repo } = context.repo;
+            const issue_number = context.payload.pull_request.number;
+
+            await github.rest.issues.createComment({
+              owner,
+              repo,
+              issue_number,
+              body: `Playwright report: ${reportUrl}`,
+            });
