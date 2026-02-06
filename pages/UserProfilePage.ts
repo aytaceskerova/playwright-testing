@@ -24,6 +24,15 @@ export class UserProfilePage extends BasePage {
   readonly editDateOfBirthInput: Locator;
   readonly editCancelButton: Locator;
   readonly editSaveButton: Locator;
+  readonly editFirstNameError: Locator;
+  readonly editLastNameError: Locator;
+  readonly editEmailError: Locator;
+  readonly editDateOfBirthError: Locator;
+  readonly editCalendar: Locator;
+  readonly editCalendarPrevButton: Locator;
+  readonly editCalendarNextButton: Locator;
+  readonly editCalendarHeader: Locator;
+  readonly editCalendarDayButton: Locator;
 
   constructor(page: Page) {
     super(page);
@@ -49,6 +58,15 @@ export class UserProfilePage extends BasePage {
     this.editDateOfBirthInput = page.locator('form input[name="dateOfBirth"]').first();
     this.editCancelButton = page.getByRole('button', { name: 'Cancel' }).first();
     this.editSaveButton = page.getByRole('button', { name: 'Save' }).first();
+    this.editFirstNameError = page.locator('//label[input[@name="firstName"]]/following-sibling::div[1]/span');
+    this.editLastNameError = page.locator('//label[input[@name="lastName"]]/following-sibling::div[1]/span');
+    this.editEmailError = page.locator('//label[input[@name="email"]]/following-sibling::div[1]/span');
+    this.editDateOfBirthError = page.locator('//label[input[@name="dateOfBirth"]]/following-sibling::div[1]/span');
+    this.editCalendar = page.locator('div.fixed.inline-block.border.shadow-lg.rounded-md.bg-white');
+    this.editCalendarPrevButton = this.editCalendar.locator('img[alt="arrow_left"]');
+    this.editCalendarNextButton = this.editCalendar.locator('img[alt="arrow_right"]');
+    this.editCalendarHeader = this.editCalendar.locator('div').filter({ hasText: /^[A-Za-z]+\s+\d{4}$/ }).first();
+    this.editCalendarDayButton = this.editCalendar.locator('div.cursor-pointer').filter({ hasText: /^\d{1,2}$/ });
   }
 
   async waitForPageLoad(): Promise<void> {
@@ -71,5 +89,32 @@ export class UserProfilePage extends BasePage {
   async openEditFlyout(): Promise<void> {
     await this.editButton.click();
     await expect(this.editFlyoutTitle).toBeVisible();
+  }
+
+  async openEditDatePicker(): Promise<void> {
+    await this.editDateOfBirthInput.click();
+    await expect(this.editCalendar).toBeVisible();
+  }  
+
+  async navigateEditCalendarPrev(): Promise<void> {
+    await this.editCalendarPrevButton.click();
+  }
+
+  async navigateEditCalendarNext(): Promise<void> {
+    await this.editCalendarNextButton.click();
+  }
+
+  async selectEditCalendarDay(): Promise<void> {
+    const day = this.editCalendarDayButton.first();
+    await expect(day).toBeVisible();
+    await day.click();
+  }
+
+  async getEditCalendarHeaderText(): Promise<string> {
+    return (await this.editCalendarHeader.textContent()) || '';
+  }
+
+  async closeEditCalendar(): Promise<void> {
+    await this.page.keyboard.press('Escape');
   }
 }
