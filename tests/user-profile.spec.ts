@@ -2,6 +2,7 @@ import { test, expect } from './fixtures/base';
 import { RegistrationData } from '../types/registration';
 import { RegistrationTestData } from '../data/registrationData';
 import { ERROR_BORDER_COLOR } from '../enums/cssPatterns';
+import { InvalidEmailTestData } from '../enums/emailTestData';
 
 test.describe('User profile page', () => {
   let registeredUser: RegistrationData;
@@ -362,8 +363,7 @@ test.describe('Edit personal information flyout', () => {
   });
 
   test('[AQAPRACT-570] Edit with invalid email format in the "Email" field', async ({ userProfilePage }) => {
-    const invalidEmails = ['Abc', 'Abc@abc@abc', 'Abc abc@abc', 'dsf()ds@ds'];
-    for (const invalidEmail of invalidEmails) {
+    for (const invalidEmail of InvalidEmailTestData) {
       await test.step(`Enter invalid email: ${invalidEmail}`, async () => {
         await userProfilePage.editFlyout.emailInput.fill(invalidEmail);
         await userProfilePage.editFlyout.emailInput.blur();
