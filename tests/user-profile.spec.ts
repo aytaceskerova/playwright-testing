@@ -1,6 +1,9 @@
 import { test, expect } from './fixtures/base';
 import { RegistrationData } from '../types/registration';
 import { RegistrationTestData } from '../data/registrationData';
+import { ERROR_BORDER_COLOR } from '../enums/cssPatterns';
+import { InvalidEmailTestData } from '../enums/emailTestData';
+
 test.describe('User profile page', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ page, registrationPage, signInPage, userProfilePage }) => {
@@ -73,57 +76,57 @@ test.describe('Edit personal information flyout', () => {
   });
   test('[AQAPRACT-548] "Edit personal information" flyout available', async ({ userProfilePage }) => {
     await test.step('Verify flyout elements', async () => {
-      await expect(userProfilePage.editFlyoutTitle).toBeVisible();
-      await expect(userProfilePage.editFlyoutSubtitle).toBeVisible();
-      await expect(userProfilePage.editFlyoutCloseButton).toBeVisible();
-      await expect(userProfilePage.editFirstNameInput).toBeVisible();
-      await expect(userProfilePage.editLastNameInput).toBeVisible();
-      await expect(userProfilePage.editEmailInput).toBeVisible();
-      await expect(userProfilePage.editDateOfBirthInput).toBeVisible();
-      await expect(userProfilePage.editCancelButton).toBeVisible();
-      await expect(userProfilePage.editSaveButton).toBeVisible();
+      await expect(userProfilePage.editFlyout.title).toBeVisible();
+      await expect(userProfilePage.editFlyout.subtitle).toBeVisible();
+      await expect(userProfilePage.editFlyout.closeButton).toBeVisible();
+      await expect(userProfilePage.editFlyout.firstNameInput).toBeVisible();
+      await expect(userProfilePage.editFlyout.lastNameInput).toBeVisible();
+      await expect(userProfilePage.editFlyout.emailInput).toBeVisible();
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).toBeVisible();
+      await expect(userProfilePage.editFlyout.cancelButton).toBeVisible();
+      await expect(userProfilePage.editFlyout.saveButton).toBeVisible();
     });
     await test.step('Verify pre-filled values', async () => {
       const [year, month, day] = registeredUser.dateOfBirth.split('-');
-      await expect(userProfilePage.editFirstNameInput).toHaveValue(registeredUser.firstName);
-      await expect(userProfilePage.editLastNameInput).toHaveValue(registeredUser.lastName);
-      await expect(userProfilePage.editEmailInput).toHaveValue(registeredUser.email);
-      await expect(userProfilePage.editDateOfBirthInput).toHaveValue(`${day}/${month}/${year}`);
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue(registeredUser.firstName);
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue(registeredUser.lastName);
+      await expect(userProfilePage.editFlyout.emailInput).toHaveValue(registeredUser.email);
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).toHaveValue(`${day}/${month}/${year}`);
     });
   });
   test('[AQAPRACT-549] Edit "First name" on User profile flyout', async ({ userProfilePage }) => {
     const updatedFirstName = 'Aida';
     await test.step('Update the First name', async () => {
-      await userProfilePage.editFirstNameInput.fill(updatedFirstName);
-      await expect(userProfilePage.editFirstNameInput).toHaveValue(updatedFirstName);
+      await userProfilePage.editFlyout.firstNameInput.fill(updatedFirstName);
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue(updatedFirstName);
     });
     await test.step('Save changes', async () => {
-      await userProfilePage.editSaveButton.click();
-      await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
       await expect(userProfilePage.userName).toHaveText(`${updatedFirstName} ${registeredUser.lastName}`);
     });
   });
   test('[AQAPRACT-550] Edit "Last name" on User profile flyout', async ({ userProfilePage }) => {
     const updatedLastName = 'Stone';
     await test.step('Update the Last name', async () => {
-      await userProfilePage.editLastNameInput.fill(updatedLastName);
-      await expect(userProfilePage.editLastNameInput).toHaveValue(updatedLastName);
+      await userProfilePage.editFlyout.lastNameInput.fill(updatedLastName);
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue(updatedLastName);
     });
     await test.step('Save changes', async () => {
-      await userProfilePage.editSaveButton.click();
-      await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
       await expect(userProfilePage.userName).toHaveText(`${registeredUser.firstName} ${updatedLastName}`);
     });
   });
   test('[AQAPRACT-551] Edit "Email" on User profile flyout', async ({ page, userProfilePage, signInPage }) => {
     const updatedEmail = `updated-${Date.now()}@example.com`;
     await test.step('Update the email address', async () => {
-      await userProfilePage.editEmailInput.fill(updatedEmail);
-      await expect(userProfilePage.editEmailInput).toHaveValue(updatedEmail);
+      await userProfilePage.editFlyout.emailInput.fill(updatedEmail);
+      await expect(userProfilePage.editFlyout.emailInput).toHaveValue(updatedEmail);
     });
     await test.step('Save changes', async () => {
-      await userProfilePage.editSaveButton.click();
-      await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
       await page.reload();
       await userProfilePage.waitForPageLoad();
       await expect(userProfilePage.getProfileValue('E-mail')).toHaveText(updatedEmail);
@@ -133,40 +136,245 @@ test.describe('Edit personal information flyout', () => {
   test('[AQAPRACT-552] Edit "Date of Birth" on User profile flyout', async ({ userProfilePage }) => {
     const updatedDate = '30/12/1999';
     await test.step('Update the Date of birth', async () => {
-      await userProfilePage.editDateOfBirthInput.fill(updatedDate);
-      await expect(userProfilePage.editDateOfBirthInput).toHaveValue(updatedDate);
+      await userProfilePage.editFlyout.dateOfBirthInput.fill(updatedDate);
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).toHaveValue(updatedDate);
     });
     await test.step('Save changes', async () => {
-      await userProfilePage.editSaveButton.click();
-      await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
       await expect(userProfilePage.getProfileValue('Date of birth')).toHaveText(updatedDate);
     });
   });
   test('[AQAPRACT-553] Cancel editing the data on the flyout (after the data is edited)', async ({ userProfilePage }) => {
     await test.step('Update any field', async () => {
-      await userProfilePage.editFirstNameInput.fill('Temp');
-      await expect(userProfilePage.editFirstNameInput).toHaveValue('Temp');
+      await userProfilePage.editFlyout.firstNameInput.fill('Temp');
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue('Temp');
     });
     await test.step('Click the "Cancel" button', async () => {
-      await userProfilePage.editCancelButton.click();
-      await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+      await userProfilePage.editFlyout.cancelButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
       await expect(userProfilePage.userName).toHaveText(`${registeredUser.firstName} ${registeredUser.lastName}`);
     });
   });
   test('[AQAPRACT-554] Cancel editing the data on the flyout (without editing)', async ({ userProfilePage }) => {
-    await userProfilePage.editCancelButton.click();
-    await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+    await userProfilePage.editFlyout.cancelButton.click();
+    await expect(userProfilePage.editFlyout.title).toBeHidden();
     await expect(userProfilePage.userName).toHaveText(`${registeredUser.firstName} ${registeredUser.lastName}`);
   });
   test('[AQAPRACT-555] Close "Edit personal information" flyout by "X" button', async ({ userProfilePage }) => {
     await test.step('Change any field', async () => {
-      await userProfilePage.editLastNameInput.fill('Temp');
-      await expect(userProfilePage.editLastNameInput).toHaveValue('Temp');
+      await userProfilePage.editFlyout.lastNameInput.fill('Temp');
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue('Temp');
     });
     await test.step('Click the "X" button', async () => {
-      await userProfilePage.editFlyoutCloseButton.click();
-      await expect(userProfilePage.editFlyoutTitle).toBeHidden();
+      await userProfilePage.editFlyout.closeButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
       await expect(userProfilePage.userName).toHaveText(`${registeredUser.firstName} ${registeredUser.lastName}`);
     });
   });
+
+  test('[AQAPRACT-556] Leave "First name" field empty on "Edit personal information" flyout', async ({ userProfilePage }) => {
+    await test.step('Delete value from the "First name" field', async () => {
+      await userProfilePage.editFlyout.firstNameInput.fill('');
+      await userProfilePage.editFlyout.firstNameInput.blur();
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue('');
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+      await expect(userProfilePage.editFlyout.editFirstNameError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editFirstNameError).toContainText('Required');
+      await expect(userProfilePage.editFlyout.saveButton).toBeDisabled();
+    });
+  });
+
+  test('[AQAPRACT-557] Edit the "First name" with 1 character length', async ({ userProfilePage }) => {
+    const updatedFirstName = 'A';
+    await test.step('Enter 1 character to the "First name" field', async () => {
+      await userProfilePage.editFlyout.firstNameInput.fill(updatedFirstName);
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue(updatedFirstName);
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
+      await expect(userProfilePage.userName).toHaveText(`${updatedFirstName} ${registeredUser.lastName}`);
+    });
+  });
+
+  test('[AQAPRACT-558] Edit the "First name" with 255 character length', async ({ userProfilePage }) => {
+    const updatedFirstName = 'A'.repeat(255);
+    await test.step('Enter 255 characters to the "First name" field', async () => {
+      await userProfilePage.editFlyout.firstNameInput.fill(updatedFirstName);
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue(updatedFirstName);
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
+      await expect(userProfilePage.userName).toHaveText(`${updatedFirstName} ${registeredUser.lastName}`);
+    });
+  });
+
+  test('[AQAPRACT-559] Edit the "First name" with 256 character length', async ({ userProfilePage }) => {
+    const updatedFirstName = 'A'.repeat(256);
+    await test.step('Enter 256 characters to the "First name" field', async () => {
+      await userProfilePage.editFlyout.firstNameInput.fill(updatedFirstName);
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveValue(updatedFirstName);
+      await expect(userProfilePage.editFlyout.saveButton).toBeEnabled();
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.editFirstNameError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editFirstNameError).toContainText("The value length shouldn't exceed 255 symbols.");
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    });
+  });
+
+  test('[AQAPRACT-560] Edit the "First name" field with spaces', async ({ userProfilePage }) => {
+    await test.step('Enter spaces to the "First name" field', async () => {
+      await userProfilePage.editFlyout.firstNameInput.fill('   ');
+      await expect(userProfilePage.editFlyout.saveButton).toBeEnabled();
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.editFirstNameError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editFirstNameError).toContainText('Required');
+      await expect(userProfilePage.editFlyout.firstNameInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    });
+  });
+
+  test('[AQAPRACT-561] Leave "Last name" field empty on "Edit personal information" flyout', async ({ userProfilePage }) => {
+    await test.step('Delete value from the "Last name" field', async () => {
+      await userProfilePage.editFlyout.lastNameInput.fill('');
+      await userProfilePage.editFlyout.lastNameInput.blur();
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue('');
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+      await expect(userProfilePage.editFlyout.editLastNameError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editLastNameError).toContainText('Required');
+      await expect(userProfilePage.editFlyout.saveButton).toBeDisabled();
+    });
+  });
+
+  test('[AQAPRACT-562] Edit the "Last name" with 1 character length', async ({ userProfilePage }) => {
+    const updatedLastName = 'B';
+    await test.step('Enter 1 character to the "Last name" field', async () => {
+      await userProfilePage.editFlyout.lastNameInput.fill(updatedLastName);
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue(updatedLastName);
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
+      await expect(userProfilePage.userName).toHaveText(`${registeredUser.firstName} ${updatedLastName}`);
+    });
+  });
+
+  test('[AQAPRACT-563] Edit the "Last name" with 255 character length', async ({ userProfilePage }) => {
+    const updatedLastName = 'B'.repeat(255);
+    await test.step('Enter 255 characters to the "Last name" field', async () => {
+      await userProfilePage.editFlyout.lastNameInput.fill(updatedLastName);
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue(updatedLastName);
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
+      await expect(userProfilePage.userName).toHaveText(`${registeredUser.firstName} ${updatedLastName}`);
+    });
+  });
+
+  test('[AQAPRACT-564] Edit the "Last name" with 256 character length', async ({ userProfilePage }) => {
+    const updatedLastName = 'B'.repeat(256);
+    await test.step('Enter 256 characters to the "Last name" field', async () => {
+      await userProfilePage.editFlyout.lastNameInput.fill(updatedLastName);
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveValue(updatedLastName);
+      await expect(userProfilePage.editFlyout.saveButton).toBeEnabled();
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.editLastNameError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editLastNameError).toContainText("The value length shouldn't exceed 255 symbols.");
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    });
+  });
+
+  test('[AQAPRACT-565] Edit the "Last name" field with spaces', async ({ userProfilePage }) => {
+    await test.step('Enter spaces to the "Last name" field', async () => {
+      await userProfilePage.editFlyout.lastNameInput.fill('   ');
+      await expect(userProfilePage.editFlyout.saveButton).toBeEnabled();
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.editLastNameError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editLastNameError).toContainText('Required');
+      await expect(userProfilePage.editFlyout.lastNameInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+    });
+  });
+
+  test('[AQAPRACT-566] Edit the date with empty "Date of birth" field', async ({ userProfilePage }) => {
+    await test.step('Leave the "Date of birth" field empty', async () => {
+      await userProfilePage.editFlyout.dateOfBirthInput.fill('');
+      await userProfilePage.editFlyout.dateOfBirthInput.blur();
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).toHaveValue('');
+      await expect(userProfilePage.editFlyout.saveButton).toBeDisabled();
+    });
+  });
+
+  test('[AQAPRACT-567] The elements on the calendar picker are available', async ({ userProfilePage }) => {
+    await test.step('Open the "Date of birth" calendar', async () => {
+      await userProfilePage.editFlyout.openEditDatePicker();
+      await expect(userProfilePage.editFlyout.editCalendar).toBeVisible();
+    });
+    await test.step('Navigate through months and years', async () => {
+      const startHeader = await userProfilePage.editFlyout.getEditCalendarHeaderText();
+      await userProfilePage.editFlyout.navigateEditCalendarNext();
+      const nextHeader = await userProfilePage.editFlyout.getEditCalendarHeaderText();
+      expect(nextHeader).not.toBe(startHeader);
+      await userProfilePage.editFlyout.navigateEditCalendarPrev();
+    });
+    await test.step('Select any available day', async () => {
+      await userProfilePage.editFlyout.selectEditCalendarDay();
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).not.toHaveValue('');
+      await expect(userProfilePage.editFlyout.editCalendar).toBeHidden();
+    });
+  });
+
+  test('[AQAPRACT-568] The date is filled in manually in the "Date of birth" field', async ({ userProfilePage }) => {
+    const manualDate = '15/06/1998';
+    await test.step('Open the "Date of birth" field', async () => {
+      await userProfilePage.editFlyout.openEditDatePicker();
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).toHaveAttribute('placeholder', /dd\/mm\/yyyy/i);
+    });
+    await test.step('Enter the "Date of birth" value manually', async () => {
+      await userProfilePage.editFlyout.dateOfBirthInput.fill(manualDate);
+      await userProfilePage.editFlyout.closeEditCalendar();
+      await expect(userProfilePage.editFlyout.dateOfBirthInput).toHaveValue(manualDate);
+    });
+    await test.step('Click the "Save" button', async () => {
+      await userProfilePage.editFlyout.saveButton.click();
+      await expect(userProfilePage.editFlyout.title).toBeHidden();
+      await expect(userProfilePage.getProfileValue('Date of birth')).toHaveText(manualDate);
+    });
+  });
+
+  test('[AQAPRACT-569] Edit the date with empty "Email" field', async ({ userProfilePage }) => {
+    await test.step('Delete value from the "Email" field', async () => {
+      await userProfilePage.editFlyout.emailInput.fill('');
+      await userProfilePage.editFlyout.emailInput.blur();
+      await expect(userProfilePage.editFlyout.emailInput).toHaveValue('');
+      await expect(userProfilePage.editFlyout.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+      await expect(userProfilePage.editFlyout.editEmailError).toBeVisible();
+      await expect(userProfilePage.editFlyout.editEmailError).toContainText('Required');
+    });
+  });
+
+  test('[AQAPRACT-570] Edit with invalid email format in the "Email" field', async ({ userProfilePage }) => {
+    for (const invalidEmail of InvalidEmailTestData) {
+      await test.step(`Enter invalid email: ${invalidEmail}`, async () => {
+        await userProfilePage.editFlyout.emailInput.fill(invalidEmail);
+        await userProfilePage.editFlyout.emailInput.blur();
+        await expect(userProfilePage.editFlyout.emailInput).toHaveValue(invalidEmail);
+        await expect(userProfilePage.editFlyout.emailInput).toHaveCSS('border-color', ERROR_BORDER_COLOR);
+        await expect(userProfilePage.editFlyout.editEmailError).toBeVisible();
+        await expect(userProfilePage.editFlyout.editEmailError).toContainText('Invalid email address');
+        await expect(userProfilePage.editFlyout.saveButton).toBeDisabled();
+      });
+    }
+  });
+
 });
+
