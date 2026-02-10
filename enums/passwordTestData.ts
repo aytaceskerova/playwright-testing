@@ -4,4 +4,5 @@ export const enum PasswordTestData {
   Max = 'AAAAAAAAAAAAAAAAAAAA',
   MaxPlus = 'AAAAAAAAAAAAAAAAAAAAA',
   Invalid = 'WrongPassword123',
+  ConfirmMismatch = 'Different123',
 }

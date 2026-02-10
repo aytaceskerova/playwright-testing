@@ -1,4 +1,6 @@
-import { expect, Locator, Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
+import { Actions } from '../helper/actions';
+import { Assertions } from '../helper/assertions';
 
 export class EditPersonalInfoFlyout {
   readonly root: Locator;
@@ -21,9 +23,13 @@ export class EditPersonalInfoFlyout {
   readonly editCalendarHeader: Locator;
   readonly editCalendarDayButton: Locator;
   private readonly page: Page;
+  private readonly actions: Actions;
+  private readonly assertions: Assertions;
 
   constructor(page: Page, root: Locator) {
     this.page = page;
+    this.actions = new Actions(page);
+    this.assertions = new Assertions(page);
     this.root = root;
     this.title = page.getByRole('heading', { name: 'Edit personal information' }).first();
     this.subtitle = page.getByText('Please, provide your personal information in English.').first();
@@ -46,22 +52,22 @@ export class EditPersonalInfoFlyout {
   }
 
   async openEditDatePicker(): Promise<void> {
-    await this.dateOfBirthInput.click();
-    await expect(this.editCalendar).toBeVisible();
+    await this.actions.click(this.dateOfBirthInput);
+    await this.assertions.verifyElementToBeVisible(this.editCalendar);
   }
 
   async navigateEditCalendarPrev(): Promise<void> {
-    await this.editCalendarPrevButton.click();
+    await this.actions.click(this.editCalendarPrevButton);
   }
 
   async navigateEditCalendarNext(): Promise<void> {
-    await this.editCalendarNextButton.click();
+    await this.actions.click(this.editCalendarNextButton);
   }
 
   async selectEditCalendarDay(): Promise<void> {
     const day = this.editCalendarDayButton.first();
-    await expect(day).toBeVisible();
-    await day.click();
+    await this.assertions.verifyElementToBeVisible(day);
+    await this.actions.click(day);
   }
 
   async getEditCalendarHeaderText(): Promise<string> {
@@ -69,6 +75,6 @@ export class EditPersonalInfoFlyout {
   }
 
   async closeEditCalendar(): Promise<void> {
-    await this.page.keyboard.press('Escape');
+    await this.actions.pressKey('Escape');
   }
 }

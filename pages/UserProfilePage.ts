@@ -1,4 +1,4 @@
-import { Locator, expect, Page } from '@playwright/test';
+import { Locator, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 import { EditPersonalInfoFlyout } from './EditPersonalInfoFlyout';
 
@@ -35,8 +35,8 @@ export class UserProfilePage extends BasePage {
   }
 
   async waitForPageLoad(): Promise<void> {
-    await this.page.waitForLoadState('networkidle');
-    await expect(this.signOut).toBeVisible();
+    await this.waiters.waitForPageReady('networkidle');
+    await this.assertions.verifyElementToBeVisible(this.signOut);
   }
 
   getProfileValue(labelText: string): Locator {
@@ -48,11 +48,11 @@ export class UserProfilePage extends BasePage {
   }
 
   async openAqaPracticeDropdown(): Promise<void> {
-    await this.aqaPracticeButton.click();
+    await this.actions.click(this.aqaPracticeButton);
   }
 
   async openEditFlyout(): Promise<void> {
-    await this.editButton.click();
-    await expect(this.editFlyout.title).toBeVisible();
+    await this.actions.click(this.editButton);
+    await this.assertions.verifyElementToBeVisible(this.editFlyout.title);
   }
 }

@@ -56,29 +56,29 @@ export class RegistrationPage extends BasePage {
     await this.goto('/registration');
   }
   async fillFirstName(firstName: string): Promise<void> {
-    await this.firstNameInput.fill(firstName);
+    await this.actions.fill(this.firstNameInput, firstName);
   }
 
   async fillLastName(lastName: string): Promise<void> {
-    await this.lastNameInput.fill(lastName);
+    await this.actions.fill(this.lastNameInput, lastName);
   }
 
   async fillDateOfBirth(dateOfBirth: string): Promise<void> {
-    await this.dateOfBirthInput.click();
-    await this.dateOfBirthInput.fill(dateOfBirth);
-    await this.page.keyboard.press('Escape');
+    await this.actions.click(this.dateOfBirthInput);
+    await this.actions.fill(this.dateOfBirthInput, dateOfBirth);
+    await this.actions.pressKey('Escape');
   }
 
   async fillEmail(email: string): Promise<void> {
-    await this.emailInput.fill(email);
+    await this.actions.fill(this.emailInput, email);
   }
 
   async fillPassword(password: string): Promise<void> {
-    await this.passwordInput.fill(password);
+    await this.actions.fill(this.passwordInput, password);
   }
 
   async fillConfirmPassword(confirmPassword: string): Promise<void> {
-    await this.confirmPasswordInput.fill(confirmPassword);
+    await this.actions.fill(this.confirmPasswordInput, confirmPassword);
   }
 
   async fillAllFields(data: RegistrationData): Promise<void> {
@@ -91,7 +91,7 @@ export class RegistrationPage extends BasePage {
   }
 
   async clickSubmitButton(): Promise<void> {
-    await this.submitButton.click();
+    await this.actions.click(this.submitButton);
   }
 
   async areFieldsEmpty(): Promise<void> {
@@ -121,30 +121,30 @@ export class RegistrationPage extends BasePage {
   }
 
   async openCalendar(): Promise<void> {
-    await this.dateOfBirthInput.click();
-    await expect(this.calendar).toBeVisible();
+    await this.actions.click(this.dateOfBirthInput);
+    await this.assertions.verifyElementToBeVisible(this.calendar);
   }
 
   async navigateCalendarPrev(): Promise<void> {
-    await this.calendarPrevButton.click();
+    await this.actions.click(this.calendarPrevButton);
   }
 
   async navigateCalendarNext(): Promise<void> {
-    await this.calendarNextButton.click();
+    await this.actions.click(this.calendarNextButton);
   }
 
   async selectYear(year: string): Promise<void> {
-    await expect(this.calendarYearDropdown).toBeVisible();
-    await this.calendarYearDropdown.selectOption(year);
+    await this.assertions.verifyElementToBeVisible(this.calendarYearDropdown);
+    await this.actions.selectOption(this.calendarYearDropdown, year);
   }
 
   async selectMonth(month: string): Promise<void> {
-    await expect(this.calendarMonthDropdown).toBeVisible();
-    await this.calendarMonthDropdown.selectOption(month);
+    await this.assertions.verifyElementToBeVisible(this.calendarMonthDropdown);
+    await this.actions.selectOption(this.calendarMonthDropdown, month);
   }
   async selectDay(): Promise<void> {
-    await expect(this.calendarDayButton).toBeVisible();
-    await this.calendarDayButton.click();
+    await this.assertions.verifyElementToBeVisible(this.calendarDayButton);
+    await this.actions.click(this.calendarDayButton);
   }
 
   async getSelectedYear(): Promise<string> {
@@ -166,6 +166,6 @@ export class RegistrationPage extends BasePage {
   }
 
   async closeCalendar(): Promise<void> {
-    await this.page.keyboard.press('Escape');
+    await this.actions.pressKey('Escape');
   }
 }

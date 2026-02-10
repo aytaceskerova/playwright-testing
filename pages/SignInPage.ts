@@ -2,7 +2,8 @@ import { Locator, expect, Page } from '@playwright/test';
 import { BasePage } from './BasePage';
 
 export class SignInPage extends BasePage {
-  readonly registrationLink: Locator;
+  //readonly registrationLink: Locator;
+  readonly registrationLink: Locator = this.page.locator('a', { hasText: 'Registration' });
   readonly signInLink: Locator;
   readonly signInButton: Locator;
   readonly emailInput: Locator;
@@ -13,7 +14,7 @@ export class SignInPage extends BasePage {
 
   constructor(page: Page) {
     super(page);
-    this.registrationLink = page.locator('a', { hasText: 'Registration' });
+    //this.registrationLink = page.locator('a', { hasText: 'Registration' });
     this.signInLink = page.locator('a', { hasText: 'Sing in' });
     this.signInButton = page.locator('button', { hasText: 'Sign in' });
     this.emailInput = page.locator('input[name="email"]');
@@ -26,11 +27,11 @@ export class SignInPage extends BasePage {
     await this.goto('/login');
   }
   async fillEmail(email: string): Promise<void> {
-    await this.emailInput.fill(email);
+    await this.actions.fill(this.emailInput, email);
   }
 
   async fillPassword(password: string): Promise<void> {
-    await this.passwordInput.fill(password);
+    await this.actions.fill(this.passwordInput, password);
   }
 
   async areFieldsEmpty(): Promise<void> {
@@ -41,6 +42,6 @@ export class SignInPage extends BasePage {
   async signIn(email: string, password: string): Promise<void> {
     await this.fillEmail(email);
     await this.fillPassword(password);
-    await this.signInButton.click();
+    await this.actions.click(this.signInButton);
   }
 }
