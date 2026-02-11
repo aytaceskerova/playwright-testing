@@ -1,0 +1,1 @@
+export const DEFAULT_ASSERTION_TIMEOUT = 6000;
