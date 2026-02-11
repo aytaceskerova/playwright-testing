@@ -10,9 +10,6 @@ export class SignInPage extends BasePage {
   readonly emailError: Locator = this.page.locator('//label[input[@name="email"]]/following-sibling::div[1]/span');
   readonly passwordError: Locator = this.page.locator('//label[input[@name="password"]]/following-sibling::div[1]/span');
   readonly signInError: Locator = this.page.getByText('Email or password is not valid').first();
-  async openSignInPage(): Promise<void> {
-    await this.actions.goto('/login');
-  }
 
   async areFieldsEmpty(): Promise<void> {
     await this.assertions.verifyElementInputIsEmpty(this.emailInput);

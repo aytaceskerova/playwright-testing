@@ -2,6 +2,7 @@ import { Page } from '@playwright/test';
 import { Actions } from '../helper/actions';
 import { Assertions } from '../helper/assertions';
 import { Waiters } from '../helper/waiters';
+
 export class BasePage {
   readonly page: Page;
   readonly actions: Actions;

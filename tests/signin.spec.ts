@@ -3,6 +3,7 @@ import { RegistrationData } from '../types/registration';
 import { ERROR_BORDER_COLOR } from '../data/constants/cssPatterns';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../data/constants/emailConstants';
 import { SIGN_IN_TEST_DATA } from '../data/constants/signInTestData';
+import { URL_PATHS } from '../data/constants/urlPaths';
 import { URL_PATTERNS } from '../data/constants/urlPatterns';
 import { VALIDATION_MESSAGES } from '../data/constants/validationMessages';
 import { PasswordTestData } from '../data/enums/passwordTestData';
@@ -12,7 +13,7 @@ test.describe('Sign in/ Credentials validation', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ registrationPage, signInPage }) => {
     registeredUser = new RegistrationTestData();
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.actions.click(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Login);
@@ -54,7 +55,7 @@ test.describe('Sign in / Email field validation', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ registrationPage, signInPage }) => {
     registeredUser = new RegistrationTestData();
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.actions.click(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Login);
@@ -80,7 +81,7 @@ test.describe('Sign in / Password field validation', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ registrationPage }) => {
     registeredUser = new RegistrationTestData();
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.actions.click(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Login);

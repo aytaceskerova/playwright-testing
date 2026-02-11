@@ -27,10 +27,6 @@ export class RegistrationPage extends BasePage {
   readonly calendarMonthDropdown: Locator = this.calendar.locator('select').last();
   readonly calendarDayButton: Locator = this.calendar.locator('.react-datepicker__day:not(.react-datepicker__day--outside-month)').first();
 
-  async openRegistrationPage(): Promise<void> {
-    await this.actions.goto('/registration');
-  }
-
   async fillDateOfBirth(dateOfBirth: string): Promise<void> {
     await this.actions.click(this.dateOfBirthInput);
     await this.actions.fill(this.dateOfBirthInput, dateOfBirth);

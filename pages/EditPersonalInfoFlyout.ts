@@ -1,5 +1,4 @@
 import { Locator } from '@playwright/test';
-import { KeyboardKey } from '../data/enums/keyboardKeys';
 import { BasePage } from './BasePage';
 
 export class EditPersonalInfoFlyout extends BasePage {
@@ -34,7 +33,4 @@ export class EditPersonalInfoFlyout extends BasePage {
     await this.actions.click(day);
   }
 
-  async closeEditCalendar(): Promise<void> {
-    await this.actions.pressKey(KeyboardKey.Escape);
-  }
 }

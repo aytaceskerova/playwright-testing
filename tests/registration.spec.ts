@@ -4,6 +4,7 @@ import { ERROR_BORDER_COLOR } from '../data/constants/cssPatterns';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../data/constants/emailConstants';
 import { FIELD_LENGTHS } from '../data/constants/fieldLengths';
 import { REGISTRATION_TEST_DATA } from '../data/constants/registrationTestData';
+import { URL_PATHS } from '../data/constants/urlPaths';
 import { URL_PATTERNS } from '../data/constants/urlPatterns';
 import { VALIDATION_MESSAGES } from '../data/constants/validationMessages';
 import { InvalidEmailTestData } from '../data/enums/emailTestData';
@@ -13,7 +14,7 @@ import { RegistrationTestData } from '../data/pojos/registrationData';
 
 test.describe('Registration tests', () => {
   test('[AQAPRACT-507] Availability of links \'Registration\' / \'Sign\' on Sign in page', async ({ signInPage, registrationPage }) => {
-    await signInPage.openSignInPage();
+    await signInPage.actions.goto(URL_PATHS.Login);
     await signInPage.actions.click(signInPage.registrationLink);
     await signInPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Registration);
     await registrationPage.areFieldsEmpty();
@@ -24,7 +25,7 @@ test.describe('Registration tests', () => {
   });
 
   test('[AQAPRACT-508] registers with valid data', async ({ registrationPage, signInPage, userProfilePage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     const data: RegistrationData = new RegistrationTestData();
 
     await registrationPage.fillAllFields(data);
@@ -44,7 +45,7 @@ test.describe('Registration tests', () => {
 
 test.describe('First name field validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.fill(registrationPage.lastNameInput, REGISTRATION_TEST_DATA.LastName);
     await registrationPage.fillDateOfBirth(REGISTRATION_TEST_DATA.DateOfBirth);
     await registrationPage.actions.fill(registrationPage.emailInput, `${EMAIL_PREFIXES.Base}${Date.now()}@${EMAIL_DOMAIN}`);
@@ -94,7 +95,7 @@ test.describe('First name field validation', () => {
 
 test.describe('Last name field validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.fill(registrationPage.firstNameInput, REGISTRATION_TEST_DATA.FirstName);
     await registrationPage.fillDateOfBirth(REGISTRATION_TEST_DATA.DateOfBirth);
     await registrationPage.actions.fill(registrationPage.emailInput, `${EMAIL_PREFIXES.Base}${Date.now()}@${EMAIL_DOMAIN}`);
@@ -148,7 +149,7 @@ test.describe('Last name field validation', () => {
 
 test.describe('Date of birth field validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.fill(registrationPage.firstNameInput, REGISTRATION_TEST_DATA.FirstName);
     await registrationPage.actions.fill(registrationPage.lastNameInput, REGISTRATION_TEST_DATA.LastName);
     await registrationPage.actions.fill(registrationPage.emailInput, `${EMAIL_PREFIXES.Base}${Date.now()}@${EMAIL_DOMAIN}`);
@@ -226,7 +227,7 @@ test.describe('Date of birth field validation', () => {
 
 test.describe('Calendar validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.click(registrationPage.dateOfBirthInput);
     await registrationPage.assertions.verifyElementToBeVisible(registrationPage.calendar);
   });
@@ -296,7 +297,7 @@ test.describe('Calendar validation', () => {
 
 test.describe('Email field validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.fill(registrationPage.firstNameInput, REGISTRATION_TEST_DATA.FirstName);
     await registrationPage.actions.fill(registrationPage.lastNameInput, REGISTRATION_TEST_DATA.AltLastName);
     await registrationPage.fillDateOfBirth(REGISTRATION_TEST_DATA.DateOfBirth);
@@ -334,7 +335,7 @@ test.describe('Email field validation', () => {
       await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Login);
     });
     await test.step('Enter already registered email', async () => {
-      await registrationPage.openRegistrationPage();
+      await registrationPage.actions.goto(URL_PATHS.Registration);
       await registrationPage.actions.fill(registrationPage.firstNameInput, REGISTRATION_TEST_DATA.FirstName);
       await registrationPage.actions.fill(registrationPage.lastNameInput, REGISTRATION_TEST_DATA.AltLastName);
       await registrationPage.fillDateOfBirth(REGISTRATION_TEST_DATA.DateOfBirth);
@@ -358,7 +359,7 @@ test.describe('Email field validation', () => {
 
 test.describe('Password field validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.fill(registrationPage.firstNameInput, REGISTRATION_TEST_DATA.FirstName);
     await registrationPage.actions.fill(registrationPage.lastNameInput, REGISTRATION_TEST_DATA.LastName);
     await registrationPage.fillDateOfBirth(REGISTRATION_TEST_DATA.DateOfBirth);
@@ -436,7 +437,7 @@ test.describe('Password field validation', () => {
 
 test.describe('Confirm password field validation', () => {
   test.beforeEach(async ({ registrationPage }) => {
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.actions.fill(registrationPage.firstNameInput, REGISTRATION_TEST_DATA.FirstName);
     await registrationPage.actions.fill(registrationPage.lastNameInput, REGISTRATION_TEST_DATA.LastName);
     await registrationPage.fillDateOfBirth(REGISTRATION_TEST_DATA.DateOfBirth);

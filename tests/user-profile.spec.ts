@@ -4,6 +4,7 @@ import { ERROR_BORDER_COLOR } from '../data/constants/cssPatterns';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../data/constants/emailConstants';
 import { FIELD_LENGTHS } from '../data/constants/fieldLengths';
 import { REGEX_PATTERNS } from '../data/constants/regexPatterns';
+import { URL_PATHS } from '../data/constants/urlPaths';
 import { URL_PATTERNS } from '../data/constants/urlPatterns';
 import {
   AQA_PRACTICE_OPTIONS,
@@ -13,13 +14,14 @@ import {
 } from '../data/constants/userProfileTestData';
 import { VALIDATION_MESSAGES } from '../data/constants/validationMessages';
 import { InvalidEmailTestData } from '../data/enums/emailTestData';
+import { KeyboardKey } from '../data/enums/keyboardKeys';
 import { RegistrationTestData } from '../data/pojos/registrationData';
 
 test.describe('User profile page', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ registrationPage, signInPage, userProfilePage }) => {
     registeredUser = new RegistrationTestData();
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.actions.click(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Login);
@@ -91,7 +93,7 @@ test.describe('Edit personal information flyout', () => {
   let registeredUser: RegistrationData;
   test.beforeEach(async ({ registrationPage, signInPage, userProfilePage }) => {
     registeredUser = new RegistrationTestData();
-    await registrationPage.openRegistrationPage();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.fillAllFields(registeredUser);
     await registrationPage.actions.click(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Login);
@@ -467,7 +469,7 @@ test.describe('Edit personal information flyout', () => {
     });
     await test.step('Enter the "Date of birth" value manually', async () => {
       await userProfilePage.actions.fill(userProfilePage.editFlyout.dateOfBirthInput, manualDate);
-      await userProfilePage.editFlyout.closeEditCalendar();
+      await userProfilePage.actions.pressKey(KeyboardKey.Escape);
       await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.dateOfBirthInput, manualDate);
     });
     await test.step('Click the "Save" button', async () => {

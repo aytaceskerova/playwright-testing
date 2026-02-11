@@ -1,6 +1,8 @@
-import { Locator, SelectOption } from '@playwright/test';
+import { Locator } from '@playwright/test';
+import { SelectOption } from '../types/selectOption';
 import { WaitUntil } from '../types/waitUntil';
 import { BaseHelp } from './base.help';
+
 export class Actions extends BaseHelp {
   async goto(url: string, waitUntil: WaitUntil = 'domcontentloaded'): Promise<void> {
     await this.page.goto(url, { waitUntil });
