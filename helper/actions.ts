@@ -1,7 +1,8 @@
 import { Locator, SelectOption } from '@playwright/test';
+import { WaitUntil } from '../types/waitUntil';
 import { BaseHelp } from './base.help';
 export class Actions extends BaseHelp {
-  async goto(url: string, waitUntil: 'load' | 'domcontentloaded' | 'networkidle' | 'commit' = 'domcontentloaded'): Promise<void> {
+  async goto(url: string, waitUntil: WaitUntil = 'domcontentloaded'): Promise<void> {
     await this.page.goto(url, { waitUntil });
   }
 
@@ -37,7 +38,11 @@ export class Actions extends BaseHelp {
     await this.page.mouse.move(x, y);
   }
 
-  async reload(waitUntil: 'load' | 'domcontentloaded' | 'networkidle' | 'commit' = 'domcontentloaded'): Promise<void> {
+  async reload(waitUntil: WaitUntil = 'domcontentloaded'): Promise<void> {
     await this.page.reload({ waitUntil });
+  }
+
+  async retrieveElementTextContent(element: Locator): Promise<string> {
+    return (await element.textContent()) || '';
   }
 }

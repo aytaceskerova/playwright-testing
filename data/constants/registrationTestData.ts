@@ -1,0 +1,17 @@
+export const REGISTRATION_TEST_DATA = {
+  FirstName: 'TestKai',
+  LastName: 'Doe',
+  AltLastName: 'Egv',
+  DateOfBirth: '2004-09-20',
+  FutureDateOfBirth: '2999-01-01',
+  Password: 'TestPassword123',
+  ConfirmPassword: 'TestPassword123',
+  MinCharValue: 'a',
+  SpaceValue: '   ',
+  SingleSpaceValue: ' ',
+  CalendarYear: '2026',
+  CalendarMonth: 'June',
+  CalendarMonthNumeric: '06',
+  ManualDateInput: '2004-09-20',
+  ManualDateOutput: '09/20/2004',
+} as const;

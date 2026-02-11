@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page } from '@playwright/test';
 import { Actions } from '../helper/actions';
 import { Assertions } from '../helper/assertions';
 import { Waiters } from '../helper/waiters';
@@ -12,12 +12,6 @@ export class BasePage {
     this.actions = new Actions(page);
     this.assertions = new Assertions(page);
     this.waiters = new Waiters(page);
-  }
-  async goto(url: string): Promise<void> {
-    await this.actions.goto(url);
-  }
-  protected async expectInputToBeEmpty(input: Locator): Promise<void> {
-    expect(await input.inputValue()).toBe('');
   }
 }
 
