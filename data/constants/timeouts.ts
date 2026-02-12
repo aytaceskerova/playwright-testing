@@ -1,1 +1,2 @@
 export const DEFAULT_ASSERTION_TIMEOUT = 6000;
+export const NAVIGATION_TIMEOUT = 15000;
