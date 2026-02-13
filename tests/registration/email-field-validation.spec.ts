@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { ERROR_BORDER_COLOR } from '../../data/constants/cssPatterns';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../../data/constants/emailConstants';
 import { REGISTRATION_TEST_DATA } from '../../data/constants/registrationTestData';
@@ -18,7 +19,7 @@ test.describe('Email field validation', () => {
   });
 
   test('[AQAPRACT-523] Register with empty "Email" field', async ({ registrationPage }) => {
-    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.emailInput, '');
+    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.emailInput, BLANK);
     await registrationPage.assertions.verifyElementToBeDisabled(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Registration);
   });

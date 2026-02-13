@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { RegistrationData } from '../../types/registration';
 import { ERROR_BORDER_COLOR } from '../../data/constants/cssPatterns';
 import { URL_PATHS } from '../../data/constants/urlPaths';
@@ -23,7 +24,7 @@ test.describe('Sign in / Email field validation', () => {
     await test.step('Leave the "Email" field empty', async () => {
       await signInPage.actions.focus(signInPage.emailInput);
       await signInPage.actions.blur(signInPage.emailInput);
-      await signInPage.assertions.verifyElementToHaveValue(signInPage.emailInput, '');
+      await signInPage.assertions.verifyElementToHaveValue(signInPage.emailInput, BLANK);
       await signInPage.assertions.verifyElementToHaveCss(signInPage.emailInput, 'border-color', ERROR_BORDER_COLOR);
       await signInPage.assertions.verifyElementToBeVisible(signInPage.emailError);
       await signInPage.assertions.verifyElementToContainText(signInPage.emailError, VALIDATION_MESSAGES.Required);

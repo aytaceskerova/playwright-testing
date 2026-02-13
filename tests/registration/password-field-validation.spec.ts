@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { ERROR_BORDER_COLOR } from '../../data/constants/cssPatterns';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../../data/constants/emailConstants';
 import { REGISTRATION_TEST_DATA } from '../../data/constants/registrationTestData';
@@ -77,7 +78,7 @@ test.describe('Password field validation', () => {
   test('[AQAPRACT-530] Register with empty "Password" field', async ({ registrationPage }) => {
     await registrationPage.actions.focus(registrationPage.passwordInput);
     await registrationPage.actions.blur(registrationPage.passwordInput);
-    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.passwordInput, '');
+    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.passwordInput, BLANK);
     await registrationPage.assertions.verifyElementToBeDisabled(registrationPage.submitButton);
   });
 });

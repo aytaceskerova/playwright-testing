@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { RegistrationData } from '../../types/registration';
 import { ERROR_BORDER_COLOR } from '../../data/constants/cssPatterns';
 import { URL_PATHS } from '../../data/constants/urlPaths';
@@ -27,7 +28,7 @@ test.describe('Sign in / Password field validation', () => {
     await test.step('Leave the "Password" field empty', async () => {
       await signInPage.actions.focus(signInPage.passwordInput);
       await signInPage.actions.blur(signInPage.passwordInput);
-      await signInPage.assertions.verifyElementToHaveValue(signInPage.passwordInput, '');
+      await signInPage.assertions.verifyElementToHaveValue(signInPage.passwordInput, BLANK);
       await signInPage.assertions.verifyElementToHaveCss(signInPage.passwordInput, 'border-color', ERROR_BORDER_COLOR);
       await signInPage.assertions.verifyElementToBeVisible(signInPage.passwordError);
       await signInPage.assertions.verifyElementToContainText(signInPage.passwordError, VALIDATION_MESSAGES.Required);

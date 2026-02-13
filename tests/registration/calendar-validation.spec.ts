@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { REGISTRATION_TEST_DATA } from '../../data/constants/registrationTestData';
 import { URL_PATHS } from '../../data/constants/urlPaths';
 
@@ -32,7 +33,7 @@ test.describe('Calendar validation', () => {
       const lastIndex = (await yearOptions.count()) - 1;
       await registrationPage.actions.selectOption(registrationPage.calendarYearDropdown, { index: lastIndex });
       const selectedYear = await registrationPage.getSelectedYear();
-      await registrationPage.assertions.verifyValueNotToBe(selectedYear, '');
+      await registrationPage.assertions.verifyValueNotToBe(selectedYear, BLANK);
     });
   });
 
@@ -42,7 +43,7 @@ test.describe('Calendar validation', () => {
       const lastIndex = (await yearOptions.count()) - 1;
       await registrationPage.actions.selectOption(registrationPage.calendarYearDropdown, { index: lastIndex });
       const selectedYear = await registrationPage.getSelectedYear();
-      await registrationPage.assertions.verifyValueNotToBe(selectedYear, '');
+      await registrationPage.assertions.verifyValueNotToBe(selectedYear, BLANK);
     });
     await test.step('Select any year', async () => {
       await registrationPage.selectYear(REGISTRATION_TEST_DATA.CalendarYear);
@@ -70,7 +71,7 @@ test.describe('Calendar validation', () => {
     await registrationPage.selectMonth(REGISTRATION_TEST_DATA.CalendarMonth);
     await registrationPage.selectDay();
     const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
-    await registrationPage.assertions.verifyValueNotToBe(dateOfBirthValue, '');
+    await registrationPage.assertions.verifyValueNotToBe(dateOfBirthValue, BLANK);
     await registrationPage.assertions.verifyElementNotVisible(registrationPage.calendar);
   });
 });

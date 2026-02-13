@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../../data/constants/emailConstants';
 import { FIELD_LENGTHS } from '../../data/constants/fieldLengths';
 import { REGISTRATION_TEST_DATA } from '../../data/constants/registrationTestData';
@@ -45,7 +46,7 @@ test.describe('First name field validation', () => {
   });
 
   test('[AQAPRACT-512] Register with empty \'First name\' field', async ({ registrationPage }) => {
-    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.firstNameInput, '');
+    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.firstNameInput, BLANK);
     await registrationPage.assertions.verifyElementToBeDisabled(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Registration);
   });

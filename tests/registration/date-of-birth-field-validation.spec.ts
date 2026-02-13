@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../../data/constants/emailConstants';
 import { REGISTRATION_TEST_DATA } from '../../data/constants/registrationTestData';
 import { URL_PATHS } from '../../data/constants/urlPaths';
@@ -16,7 +17,7 @@ test.describe('Date of birth field validation', () => {
   });
 
   test('[AQAPRACT-519] Register with empty "Date of birth" field', async ({ registrationPage }) => {
-    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.dateOfBirthInput, '');
+    await registrationPage.assertions.verifyElementToHaveValue(registrationPage.dateOfBirthInput, BLANK);
     await registrationPage.assertions.verifyElementToBeDisabled(registrationPage.submitButton);
     await registrationPage.assertions.verifyPageToHaveUrl(URL_PATTERNS.Registration);
   });
@@ -56,7 +57,7 @@ test.describe('Date of birth field validation', () => {
     await test.step('Select day and verify date input', async () => {
       await registrationPage.selectDay();
       const dateOfBirthValue = await registrationPage.getFieldValue('dateOfBirth');
-      await registrationPage.assertions.verifyValueNotToBe(dateOfBirthValue, '');
+      await registrationPage.assertions.verifyValueNotToBe(dateOfBirthValue, BLANK);
       await registrationPage.assertions.verifyValueToContain(dateOfBirthValue, REGISTRATION_TEST_DATA.CalendarYear);
       await registrationPage.assertions.verifyValueToContain(dateOfBirthValue, REGISTRATION_TEST_DATA.CalendarMonthNumeric);
     });

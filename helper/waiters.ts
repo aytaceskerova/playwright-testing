@@ -1,5 +1,5 @@
 import { PageLoadState } from '../types/pageLoadState';
-import { NAVIGATION_TIMEOUT } from '../data/constants/timeouts';
+import { TIMEOUT } from '../data/constants/timeouts';
 import { BaseHelp } from './base.help';
 
 export class Waiters extends BaseHelp {
@@ -7,7 +7,7 @@ export class Waiters extends BaseHelp {
     await this.page.waitForLoadState(state);
   }
 
-  async waitForUrl(url: string | RegExp, timeout: number = NAVIGATION_TIMEOUT): Promise<void> {
+  async waitForUrl(url: string | RegExp, timeout: number = TIMEOUT.Navigation): Promise<void> {
     await this.page.waitForURL(url, { timeout });
   }
 }

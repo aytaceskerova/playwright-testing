@@ -1,4 +1,5 @@
 import { test } from '../fixtures/base';
+import { BLANK } from '../../data/constants/commonValues';
 import { RegistrationData } from '../../types/registration';
 import { ERROR_BORDER_COLOR } from '../../data/constants/cssPatterns';
 import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../../data/constants/emailConstants';
@@ -148,9 +149,9 @@ test.describe('Edit personal information flyout', () => {
   });
 
   test('[AQAPRACT-556] Leave "First name" field empty on "Edit personal information" flyout', async ({ userProfilePage }) => {
-    await userProfilePage.actions.fill(userProfilePage.editFlyout.firstNameInput, '');
+    await userProfilePage.actions.fill(userProfilePage.editFlyout.firstNameInput, BLANK);
     await userProfilePage.actions.blur(userProfilePage.editFlyout.firstNameInput);
-    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.firstNameInput, '');
+    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.firstNameInput, BLANK);
     await userProfilePage.assertions.verifyElementToHaveCss(
       userProfilePage.editFlyout.firstNameInput,
       'border-color',
@@ -223,9 +224,9 @@ test.describe('Edit personal information flyout', () => {
   });
 
   test('[AQAPRACT-561] Leave "Last name" field empty on "Edit personal information" flyout', async ({ userProfilePage }) => {
-    await userProfilePage.actions.fill(userProfilePage.editFlyout.lastNameInput, '');
+    await userProfilePage.actions.fill(userProfilePage.editFlyout.lastNameInput, BLANK);
     await userProfilePage.actions.blur(userProfilePage.editFlyout.lastNameInput);
-    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.lastNameInput, '');
+    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.lastNameInput, BLANK);
     await userProfilePage.assertions.verifyElementToHaveCss(
       userProfilePage.editFlyout.lastNameInput,
       'border-color',
@@ -298,9 +299,9 @@ test.describe('Edit personal information flyout', () => {
   });
 
   test('[AQAPRACT-566] Edit the date with empty "Date of birth" field', async ({ userProfilePage }) => {
-    await userProfilePage.actions.fill(userProfilePage.editFlyout.dateOfBirthInput, '');
+    await userProfilePage.actions.fill(userProfilePage.editFlyout.dateOfBirthInput, BLANK);
     await userProfilePage.actions.blur(userProfilePage.editFlyout.dateOfBirthInput);
-    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.dateOfBirthInput, '');
+    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.dateOfBirthInput, BLANK);
     await userProfilePage.assertions.verifyElementToBeDisabled(userProfilePage.editFlyout.saveButton);
   });
 
@@ -344,9 +345,9 @@ test.describe('Edit personal information flyout', () => {
   });
 
   test('[AQAPRACT-569] Edit the date with empty "Email" field', async ({ userProfilePage }) => {
-    await userProfilePage.actions.fill(userProfilePage.editFlyout.emailInput, '');
+    await userProfilePage.actions.fill(userProfilePage.editFlyout.emailInput, BLANK);
     await userProfilePage.actions.blur(userProfilePage.editFlyout.emailInput);
-    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.emailInput, '');
+    await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.emailInput, BLANK);
     await userProfilePage.assertions.verifyElementToHaveCss(
       userProfilePage.editFlyout.emailInput,
       'border-color',
