@@ -10,4 +10,11 @@ export class Waiters extends BaseHelp {
   async waitForUrl(url: string | RegExp, timeout: number = TIMEOUT.Navigation): Promise<void> {
     await this.page.waitForURL(url, { timeout });
   }
+
+  async waitForPostRegistration(timeout: number = TIMEOUT.Navigation): Promise<void> {
+    await this.page.waitForURL(
+      (url) => /login/.test(url.pathname) || url.pathname === '/' || url.pathname === '',
+      { timeout },
+    );
+  }
 }
