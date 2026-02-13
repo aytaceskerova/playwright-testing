@@ -48,7 +48,7 @@ export class Actions extends BaseHelp {
     return (await element.textContent()) || '';
   }
 
-  async setInputFiles(element: Locator, files: string | string[]): Promise<void> {
-    await element.setInputFiles(files);
+  async setInputFiles(element: Locator, filePaths: string | string[]): Promise<void> {
+    await element.setInputFiles(filePaths);
   }
 }
