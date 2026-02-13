@@ -1,8 +1,8 @@
 import { test } from '../fixtures/base';
+import { FileManager } from '../../utils/FileManager';
 import { BLANK } from '../../data/constants/commonValues';
 import { RegistrationData } from '../../types/registration';
 import { ERROR_BORDER_COLOR } from '../../data/constants/cssPatterns';
-import { EMAIL_DOMAIN, EMAIL_PREFIXES } from '../../data/constants/emailConstants';
 import { FIELD_LENGTHS } from '../../data/constants/fieldLengths';
 import { REGEX_PATTERNS } from '../../data/constants/regexPatterns';
 import { URL_PATHS } from '../../data/constants/urlPaths';
@@ -14,7 +14,9 @@ import {
 import { VALIDATION_MESSAGES } from '../../data/constants/validationMessages';
 import { InvalidEmailTestData } from '../../data/enums/emailTestData';
 import { KeyboardKey } from '../../data/enums/keyboardKeys';
+import { TestDataFile } from '../../data/enums/testDataFiles';
 import { RegistrationTestData } from '../../data/pojos/registrationData';
+import { TextGenerator } from '../../utils/TextGenerator';
 
 test.describe('Edit personal information flyout', () => {
   let registeredUser: RegistrationData;
@@ -22,10 +24,8 @@ test.describe('Edit personal information flyout', () => {
     registeredUser = new RegistrationTestData();
     await registrationPage.actions.goto(URL_PATHS.Registration);
     await registrationPage.fillAllFields(registeredUser);
-    await Promise.all([
-      registrationPage.waiters.waitForUrl(URL_PATTERNS.Login),
-      registrationPage.actions.click(registrationPage.submitButton),
-    ]);
+    await registrationPage.actions.click(registrationPage.submitButton);
+    await registrationPage.waiters.waitForUrl(URL_PATTERNS.Login);
     await signInPage.signIn(registeredUser.email, registeredUser.password);
     await userProfilePage.waitForUserProfileReady();
     await userProfilePage.openEditFlyout();
@@ -85,8 +85,26 @@ test.describe('Edit personal information flyout', () => {
     );
   });
 
+  test('[AQAPRACT-751] Upload user photo', async ({ registrationPage, signInPage, userProfilePage }) => {
+    const testImagePath = FileManager.getTestDataPath(TestDataFile.TestAvatar);
+    registeredUser = new RegistrationTestData();
+    await registrationPage.actions.goto(URL_PATHS.Registration);
+    await registrationPage.fillAllFields(registeredUser);
+    await registrationPage.actions.click(registrationPage.submitButton);
+    await registrationPage.waiters.waitForPostRegistration();
+    if (URL_PATTERNS.Login.test(registrationPage.page.url())) {
+      await signInPage.signIn(registeredUser.email, registeredUser.password);
+    }
+    await userProfilePage.waitForUserProfileReady();
+    await userProfilePage.actions.click(userProfilePage.userPhotoArea);
+    await userProfilePage.actions.setInputFiles(userProfilePage.photoFileInput, testImagePath);
+    await userProfilePage.assertions.verifyElementToBeVisible(userProfilePage.successMessage);
+    await userProfilePage.actions.click(userProfilePage.closeSuccessButton);
+    await userProfilePage.assertions.verifyElementToBeVisible(userProfilePage.userName);
+  });
+
   test.fail('[AQAPRACT-551] Edit "Email" on User profile flyout', async ({ userProfilePage }) => {
-    const updatedEmail = `${EMAIL_PREFIXES.Updated}${Date.now()}@${EMAIL_DOMAIN}`;
+    const updatedEmail = TextGenerator.uniqueUpdatedEmail();
     await userProfilePage.actions.fill(userProfilePage.editFlyout.emailInput, updatedEmail);
     await userProfilePage.assertions.verifyElementToHaveValue(userProfilePage.editFlyout.emailInput, updatedEmail);
     await userProfilePage.actions.click(userProfilePage.editFlyout.saveButton);

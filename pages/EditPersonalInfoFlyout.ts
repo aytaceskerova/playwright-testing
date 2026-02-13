@@ -21,6 +21,11 @@ export class EditPersonalInfoFlyout extends BasePage {
   readonly editCalendarNextButton: Locator = this.editCalendar.locator('img[alt="arrow_right"]');
   readonly editCalendarHeader: Locator = this.editCalendar.locator('div').filter({ hasText: /^[A-Za-z]+\s+\d{4}$/ }).first();
   readonly editCalendarDayButton: Locator = this.editCalendar.locator('div.cursor-pointer').filter({ hasText: /^\d{1,2}$/ });
+  readonly photoFileInput: Locator = this.root.locator('input[type="file"]').first();
+  readonly userPhotoArea: Locator = this.root.locator('div.cursor-pointer').filter({ has: this.root.locator('img.rounded-full') }).first();
+  readonly successPopup: Locator = this.page.getByRole('dialog', { name: /success/i }).or(this.page.locator('[role="alert"]').filter({ hasText: /success/i })).first();
+  readonly successMessage: Locator = this.successPopup.getByText(/success/i).first();
+  readonly closeSuccessButton: Locator = this.successPopup.getByRole('button', { name: /close/i });
 
   async openEditDatePicker(): Promise<void> {
     await this.actions.click(this.dateOfBirthInput);
