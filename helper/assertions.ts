@@ -1,17 +1,18 @@
 import { expect, Locator } from '@playwright/test';
-import { DEFAULT_ASSERTION_TIMEOUT } from '../data/constants/timeouts';
+import { BLANK } from '../data/constants/commonValues';
+import { TIMEOUT } from '../data/constants/timeouts';
 import { BaseHelp } from './base.help';
 
 export class Assertions extends BaseHelp {
-  async verifyElementToBeVisible(element: Locator, timeout: number = DEFAULT_ASSERTION_TIMEOUT): Promise<void> {
+  async verifyElementToBeVisible(element: Locator, timeout: number = TIMEOUT.Assertion): Promise<void> {
     await expect(element).toBeVisible({ timeout });
   }
 
-  async verifyElementToBeHidden(element: Locator, timeout: number = DEFAULT_ASSERTION_TIMEOUT): Promise<void> {
+  async verifyElementToBeHidden(element: Locator, timeout: number = TIMEOUT.Assertion): Promise<void> {
     await expect(element).toBeHidden({ timeout });
   }
 
-  async verifyElementNotVisible(element: Locator, timeout: number = DEFAULT_ASSERTION_TIMEOUT): Promise<void> {
+  async verifyElementNotVisible(element: Locator, timeout: number = TIMEOUT.Assertion): Promise<void> {
     await expect(element).not.toBeVisible({ timeout });
   }
 
@@ -32,7 +33,7 @@ export class Assertions extends BaseHelp {
   }
 
   async verifyElementInputIsEmpty(element: Locator): Promise<void> {
-    await this.verifyElementToHaveValue(element, '');
+    await this.verifyElementToHaveValue(element, BLANK);
   }
 
   async verifyElementToContainText(element: Locator, text: string | RegExp): Promise<void> {
@@ -51,7 +52,7 @@ export class Assertions extends BaseHelp {
     await expect(element).toHaveCSS(property, value);
   }
 
-  async verifyPageToHaveUrl(url: string | RegExp, timeout: number = DEFAULT_ASSERTION_TIMEOUT): Promise<void> {
+  async verifyPageToHaveUrl(url: string | RegExp, timeout: number = TIMEOUT.Assertion): Promise<void> {
     await expect(this.page).toHaveURL(url, { timeout });
   }
 

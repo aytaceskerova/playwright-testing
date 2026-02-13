@@ -1,1 +1,4 @@
-export const DEFAULT_ASSERTION_TIMEOUT = 6000;
+export const TIMEOUT = {
+  Assertion: 6000,
+  Navigation: 15000,
+} as const;
