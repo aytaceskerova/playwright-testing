@@ -1,1 +1,1 @@
-export const BLANK = '' as const;
+export const BLANK = '';
