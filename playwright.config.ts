@@ -17,6 +17,14 @@ export default defineConfig({
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
     },
+    {
+      name: 'chromium-headed-slow',
+      use: {
+        ...devices['Desktop Chrome'],
+        headless: false,
+        launchOptions: { slowMo: 500 },
+      },
+    },
   ],
 });
 

@@ -1,3 +1,4 @@
+import path from 'path';
 import { test } from '../fixtures/base';
 import { BLANK } from '../../data/constants/commonValues';
 import { RegistrationData } from '../../types/registration';
@@ -83,6 +84,34 @@ test.describe('Edit personal information flyout', () => {
       userProfilePage.userName,
       `${registeredUser.firstName} ${updatedLastName}`,
     );
+  });
+
+  test('[AQAPRACT-751] Upload user photo', async ({ registrationPage, signInPage, userProfilePage }) => {
+    const testImagePath = path.join(__dirname, '../test-data/test_avatar.png');
+    await test.step('Navigate to user profile', async () => {
+      registeredUser = new RegistrationTestData();
+      await registrationPage.actions.goto(URL_PATHS.Registration);
+      await registrationPage.fillAllFields(registeredUser);
+      await Promise.all([
+        registrationPage.waiters.waitForPostRegistration(),
+        registrationPage.actions.click(registrationPage.submitButton),
+      ]);
+      if (URL_PATTERNS.Login.test(registrationPage.page.url())) {
+        await signInPage.signIn(registeredUser.email, registeredUser.password);
+      }
+      await userProfilePage.waitForUserProfileReady();
+    });
+    await test.step('Click on the user photo area', async () => {
+      await userProfilePage.actions.click(userProfilePage.userPhotoArea);
+    });
+    await test.step('Select suitable image file', async () => {
+      await userProfilePage.actions.setInputFiles(userProfilePage.photoFileInput, testImagePath);
+      await userProfilePage.assertions.verifyElementToBeVisible(userProfilePage.successMessage);
+    });
+    await test.step('Close success message pop up window', async () => {
+      await userProfilePage.actions.click(userProfilePage.closeSuccessButton);
+      await userProfilePage.assertions.verifyElementToBeVisible(userProfilePage.userName);
+    });
   });
 
   test.fail('[AQAPRACT-551] Edit "Email" on User profile flyout', async ({ userProfilePage }) => {

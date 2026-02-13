@@ -2,7 +2,9 @@ name: Playwright Tests
 
 on:
   push:
-    branches: [ master, feature/refactor-test-pr ]
+    branches: [ master, feature/user-photo ]
+  pull_request:
+    branches: [ master, feature/user-photo ]
 
 permissions:
   contents: read

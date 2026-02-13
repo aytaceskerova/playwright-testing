@@ -7,6 +7,10 @@ export class UserProfilePage extends BasePage {
   readonly userName: Locator = this.page.locator('h1').first();
   readonly editButton: Locator = this.page.locator('img[alt="Edit"]').first();
   readonly profileAvatar: Locator = this.page.locator('section img[alt=""]').first();
+  readonly userPhotoArea: Locator = this.page.locator('img.rounded-full').first();
+  readonly photoFileInput: Locator = this.page.locator('input[type="file"]').first();
+  readonly successMessage = this.page.getByText('Your photo has been updated');
+  readonly closeSuccessButton = this.page.getByAltText('Close');
   readonly aqaPracticeButton: Locator = this.page.getByText('AQA Practice', { exact: true });
   readonly aqaPracticeExpandIcon: Locator = this.page.locator('img[alt="Expand"]').first();
   readonly headerLogo: Locator = this.page.locator('img[alt="Logo"]').first();
