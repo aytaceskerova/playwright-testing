@@ -1,4 +1,4 @@
-import { Locator } from '@playwright/test';
+import { expect, Locator } from '@playwright/test';
 import { SelectOption } from '../types/selectOption';
 import { WaitUntil } from '../types/waitUntil';
 import { BaseHelp } from './base.help';
@@ -29,6 +29,8 @@ export class Actions extends BaseHelp {
   }
 
   async selectOption(element: Locator, value: SelectOption): Promise<void> {
+    await expect(element).toBeVisible();
+    await expect(element.locator('option')).not.toHaveCount(0);
     await element.selectOption(value);
   }
 
