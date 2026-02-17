@@ -30,7 +30,8 @@ export class SelectPage extends BasePage {
     .or(this.page.getByLabel('End date'));
   readonly selectCoursesSection: Locator = this.page.getByRole('heading', { name: 'Select courses' });
   readonly searchButton: Locator = this.page
-    .locator('[data-ol="Search"]')
+    .locator('[name="SelectPageSearchButton"]')
+    .or(this.page.locator('[data-ol="Search"]'))
     .or(this.page.getByRole('button', { name: /search/i }));
   readonly noCoursesMessage: Locator = this.page.getByText(
     'Unfortunately, we did not find any courses matching your chosen criteria.',

@@ -6,6 +6,7 @@ import { AQA_PRACTICE_OPTIONS } from '../../data/constants/userProfileTestData';
 import {
   SELECT_FILTER_VALUES,
   SELECT_DATE_VALUES,
+  SEARCH_BUTTON_ENABLED_CLASS,
 } from '../../data/constants/selectPageTestData';
 import { RegistrationTestData } from '../../data/pojos/registrationData';
 
@@ -25,18 +26,23 @@ test.describe('Select page', () => {
     await userProfilePage.waiters.waitForPageReady('networkidle');
   });
 
-  test.fail('[AQAPRACT-571] "Select" page elements validation', async ({ selectPage }) => {
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.backToProfileLink);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.chooseYourCourseTitle);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.defineStudyPreferencesSection);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.selectCountryField);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.selectLanguageField);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.selectTypeField);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.dateFromField);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.dateToField);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.selectCoursesSection);
-    await selectPage.assertions.verifyElementToBeVisible(selectPage.searchButton);
-    await selectPage.assertions.verifyElementToBeDisabled(selectPage.searchButton);
+  test('[AQAPRACT-571] "Select" page elements validation', async ({ selectPage }) => {
+    await selectPage.assertions.verifyMultipleElementsToBeVisible(
+      selectPage.backToProfileLink,
+      selectPage.chooseYourCourseTitle,
+      selectPage.defineStudyPreferencesSection,
+      selectPage.selectCountryField,
+      selectPage.selectLanguageField,
+      selectPage.selectTypeField,
+      selectPage.dateFromField,
+      selectPage.dateToField,
+      selectPage.selectCoursesSection,
+      selectPage.searchButton,
+    );
+    await selectPage.assertions.verifyElementNotToHaveClass(
+      selectPage.searchButton,
+      SEARCH_BUTTON_ENABLED_CLASS,
+    );
   });
 
   test('[AQAPRACT-572] Search for existing course', async ({ selectPage }) => {

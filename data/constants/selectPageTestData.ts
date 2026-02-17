@@ -23,6 +23,8 @@ export const SELECT_FILTER_VALUES = {
   },
 } as const;
 
+export const SEARCH_BUTTON_ENABLED_CLASS = 'bg-[#feda00]';
+
 export const NO_COURSES_MESSAGE =
   'Unfortunately, we did not find any courses matching your chosen criteria.';
 

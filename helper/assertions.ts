@@ -8,6 +8,12 @@ export class Assertions extends BaseHelp {
     await expect(element).toBeVisible({ timeout });
   }
 
+  async verifyMultipleElementsToBeVisible(...args: Locator[]): Promise<void> {
+    for (const element of args) {
+      await this.verifyElementToBeVisible(element);
+    }
+  }
+
   async verifyElementToBeHidden(element: Locator, timeout: number = TIMEOUT.Assertion): Promise<void> {
     await expect(element).toBeHidden({ timeout });
   }
@@ -46,6 +52,14 @@ export class Assertions extends BaseHelp {
 
   async verifyElementToHaveAttribute(element: Locator, attribute: string, value: string | RegExp): Promise<void> {
     await expect(element).toHaveAttribute(attribute, value);
+  }
+
+  async verifyElementToHaveClass(element: Locator, className: string | RegExp): Promise<void> {
+    await expect(element).toHaveClass(className);
+  }
+
+  async verifyElementNotToHaveClass(element: Locator, className: string | RegExp): Promise<void> {
+    await expect(element).not.toHaveClass(className);
   }
 
   async verifyElementToHaveCss(element: Locator, property: string, value: string | RegExp): Promise<void> {
