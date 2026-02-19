@@ -20,6 +20,19 @@ export class Actions extends BaseHelp {
     await element.hover();
   }
 
+  async dragTo(source: Locator, target: Locator): Promise<void> {
+    const dataTransfer = await this.page.evaluateHandle(() => {
+      const DataTransferCtor = (
+        globalThis as unknown as { DataTransfer: new () => unknown }
+      ).DataTransfer;
+      return new DataTransferCtor();
+    });
+    await source.dispatchEvent('dragstart', { dataTransfer });
+    await target.dispatchEvent('dragover', { dataTransfer });
+    await target.dispatchEvent('drop', { dataTransfer });
+    await source.dispatchEvent('dragend', { dataTransfer });
+  }  
+
   async focus(element: Locator): Promise<void> {
     await element.focus();
   }
