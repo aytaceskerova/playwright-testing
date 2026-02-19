@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import { DragDropPage } from '../../pages/DragDropPage';
 import { RegistrationPage } from '../../pages/RegistrationPage';
 import { SelectPage } from '../../pages/SelectPage';
 import { SignInPage } from '../../pages/SignInPage';
@@ -8,6 +9,7 @@ export type Fixtures = {
   signInPage: SignInPage;
   userProfilePage: UserProfilePage;
   selectPage: SelectPage;
+  dragDropPage: DragDropPage;
 };
 export const test = base.extend<Fixtures>({
   registrationPage: async ({ page }, use) => {
@@ -21,6 +23,9 @@ export const test = base.extend<Fixtures>({
   },
   selectPage: async ({ page }, use) => {
     await use(new SelectPage(page));
+  },
+  dragDropPage: async ({ page }, use) => {
+    await use(new DragDropPage(page));
   },
 });
 export { expect };

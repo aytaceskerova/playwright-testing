@@ -20,6 +20,15 @@ export class Actions extends BaseHelp {
     await element.hover();
   }
 
+  async dragTo(source: Locator, target: Locator): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const dataTransfer = await this.page.evaluateHandle(() => new (globalThis as any).DataTransfer());
+    await source.dispatchEvent('dragstart', { dataTransfer });
+    await target.dispatchEvent('dragover', { dataTransfer });
+    await target.dispatchEvent('drop', { dataTransfer });
+    await source.dispatchEvent('dragend', { dataTransfer });
+  }  
+
   async focus(element: Locator): Promise<void> {
     await element.focus();
   }
