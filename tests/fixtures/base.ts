@@ -1,11 +1,13 @@
 import { test as base, expect } from '@playwright/test';
 import { RegistrationPage } from '../../pages/RegistrationPage';
+import { SelectPage } from '../../pages/SelectPage';
 import { SignInPage } from '../../pages/SignInPage';
 import { UserProfilePage } from '../../pages/UserProfilePage';
 export type Fixtures = {
   registrationPage: RegistrationPage;
   signInPage: SignInPage;
   userProfilePage: UserProfilePage;
+  selectPage: SelectPage;
 };
 export const test = base.extend<Fixtures>({
   registrationPage: async ({ page }, use) => {
@@ -16,6 +18,9 @@ export const test = base.extend<Fixtures>({
   },
   userProfilePage: async ({ page }, use) => {
     await use(new UserProfilePage(page));
+  },
+  selectPage: async ({ page }, use) => {
+    await use(new SelectPage(page));
   },
 });
 export { expect };
