@@ -20,6 +20,14 @@ export class Actions extends BaseHelp {
     await element.hover();
   }
 
+  async doubleClick(element: Locator): Promise<void> {
+    await element.dblclick();
+  }
+
+  async rightClick(element: Locator): Promise<void> {
+    await element.click({ button: 'right' });
+  }
+
   async dragTo(source: Locator, target: Locator): Promise<void> {
     const dataTransfer = await this.page.evaluateHandle(() => {
       const DataTransferCtor = (

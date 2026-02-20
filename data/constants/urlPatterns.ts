@@ -3,5 +3,6 @@ export const URL_PATTERNS = {
   Registration: /.*registration/,
   Select: /.*select/,
   DragDrop: /.*drag-drop/,
+  ActionsAlertsIframes: /.*\/actions\/?/,
   UserProfile: /\/(profile\/?)?$|^\/$/,
 } as const;
