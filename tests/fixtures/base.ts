@@ -1,4 +1,5 @@
 import { test as base, expect } from '@playwright/test';
+import { ActionsAlertsIframesPage } from '../../pages/ActionsAlertsIframesPage';
 import { DragDropPage } from '../../pages/DragDropPage';
 import { RegistrationPage } from '../../pages/RegistrationPage';
 import { SelectPage } from '../../pages/SelectPage';
@@ -10,6 +11,7 @@ export type Fixtures = {
   userProfilePage: UserProfilePage;
   selectPage: SelectPage;
   dragDropPage: DragDropPage;
+  actionsAlertsIframesPage: ActionsAlertsIframesPage;
 };
 export const test = base.extend<Fixtures>({
   registrationPage: async ({ page }, use) => {
@@ -26,6 +28,9 @@ export const test = base.extend<Fixtures>({
   },
   dragDropPage: async ({ page }, use) => {
     await use(new DragDropPage(page));
+  },
+  actionsAlertsIframesPage: async ({ page }, use) => {
+    await use(new ActionsAlertsIframesPage(page));
   },
 });
 export { expect };

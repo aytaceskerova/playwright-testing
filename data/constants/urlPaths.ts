@@ -3,4 +3,5 @@ export const URL_PATHS = {
   Registration: '/registration',
   Select: '/select',
   DragDrop: '/drag-drop',
+  ActionsAlertsIframes: '/actions',
 } as const;
