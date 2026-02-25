@@ -36,7 +36,7 @@ export class SelectPage extends BasePage {
   readonly noCoursesMessage: Locator = this.page.getByText(
     'Unfortunately, we did not find any courses matching your chosen criteria.',
   );
-  readonly coursesListbox: Locator = this.page.getByRole('listbox');
+  readonly coursesListbox: Locator = this.page.getByRole('heading', { name: 'Search results' });
   readonly coursesList: Locator = this.page.getByRole('listbox').getByRole('option');
 
   async waitForSelectPageReady(): Promise<void> {

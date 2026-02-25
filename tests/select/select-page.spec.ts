@@ -46,11 +46,13 @@ test.describe('Select page', () => {
   });
 
   test('[AQAPRACT-572] Search for existing course', async ({ selectPage }) => {
-    await selectPage.actions.selectOption(selectPage.selectTypeField, SELECT_FILTER_VALUES.Type.Testing);
+    await selectPage.actions.selectOption(selectPage.selectCountryField, SELECT_FILTER_VALUES.Country.USA);
+    await selectPage.actions.selectOption(selectPage.selectLanguageField, SELECT_FILTER_VALUES.Language.English);
+    await selectPage.actions.selectOption(selectPage.selectTypeField, SELECT_FILTER_VALUES.Type.Programming);
     await selectPage.assertions.verifyElementToBeEnabled(selectPage.searchButton);
     await selectPage.actions.click(selectPage.searchButton);
-    const courseCount = await selectPage.coursesList.count();
-    await selectPage.assertions.verifyNumberToBeGreaterThan(courseCount, 0);
+    await selectPage.assertions.verifyElementToBeVisible(selectPage.coursesListbox);
+    await selectPage.assertions.verifyElementNotVisible(selectPage.noCoursesMessage);
   });
 
   test('[AQAPRACT-573] Search for a non-existent course', async ({ selectPage }) => {
