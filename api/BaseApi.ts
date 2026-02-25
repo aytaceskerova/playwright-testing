@@ -11,11 +11,11 @@ export class BaseApi {
     return this.request.get(url);
   }
 
-  async post(url: string, data?: unknown): Promise<APIResponse> {
+  async post<T extends object>(url: string, data?: T): Promise<APIResponse> {
     return this.request.post(url, { data });
   }
 
-  async put(url: string, data?: unknown): Promise<APIResponse> {
+  async put<T extends object>(url: string, data?: T): Promise<APIResponse> {
     return this.request.put(url, { data });
   }
 
@@ -23,7 +23,7 @@ export class BaseApi {
     return this.request.delete(url);
   }
 
-  async patch(url: string, data?: unknown): Promise<APIResponse> {
+  async patch<T extends object>(url: string, data?: T): Promise<APIResponse> {
     return this.request.patch(url, { data });
   }
 }

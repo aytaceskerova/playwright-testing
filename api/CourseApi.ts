@@ -1,23 +1,7 @@
 import type { APIResponse } from '@playwright/test';
 import { BaseApi } from './BaseApi';
 import { API_ENDPOINTS } from '../data/constants/apiConfig';
-
-export interface CourseFilterBody {
-  language: string;
-  type: string;
-}
-
-export interface Course {
-  name: string;
-  country: string;
-  language: string;
-  type: string;
-  startDate: string;
-}
-
-export interface CoursesResponse {
-  courses: Course[];
-}
+import type { CourseFilterBody } from '../data/dto/course';
 
 export class CourseApi extends BaseApi {
   async filterCourses(filter: CourseFilterBody): Promise<APIResponse> {
