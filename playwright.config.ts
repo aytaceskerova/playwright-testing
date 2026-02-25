@@ -16,6 +16,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome'] },
+      testIgnore: '**/api/**',
     },
     {
       name: 'chromium-headed-slow',
@@ -23,6 +24,19 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
         headless: false,
         launchOptions: { slowMo: 500 },
+      },
+      testIgnore: '**/api/**',
+    },
+    {
+      name: 'api',
+      testMatch: '**/api/**/*.spec.ts',
+      use: {
+        baseURL: 'https://qa-course-01-api.andersenlab.com/api',
+        extraHTTPHeaders: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${process.env.AUTH_TOKEN ?? ''}`,
+        },
       },
     },
   ],

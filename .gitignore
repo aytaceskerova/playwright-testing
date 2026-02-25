@@ -3,6 +3,7 @@ dist/
 test-results/
 playwright-report/
 playwright/.cache/
+playwright/.auth/
 *.log
 .env
 .env.local
@@ -11,4 +12,3 @@ coverage/
 *.tsbuildinfo
 .prettiercache
 .eslintcache
-
