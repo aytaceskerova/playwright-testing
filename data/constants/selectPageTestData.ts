@@ -14,12 +14,15 @@ export const SELECT_PAGE_LABELS = {
 export const SELECT_FILTER_VALUES = {
   Country: {
     Italy: 'Italy',
+    USA: 'USA',
   },
   Language: {
     Dutch: 'Dutch',
+    English: 'English',
   },
   Type: {
     Testing: 'Testing',
+    Programming: 'Programming',
   },
 } as const;
 

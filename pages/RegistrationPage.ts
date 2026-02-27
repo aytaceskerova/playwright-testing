@@ -31,12 +31,14 @@ export class RegistrationPage extends BasePage {
     await this.actions.click(this.dateOfBirthInput);
     await this.actions.fill(this.dateOfBirthInput, dateOfBirth);
     await this.actions.pressKey(KeyboardKey.Escape);
+    await this.calendar.waitFor({ state: 'hidden' });
   }
 
   async fillAllFields(data: RegistrationData): Promise<void> {
     await this.actions.fill(this.firstNameInput, data.firstName);
     await this.actions.fill(this.lastNameInput, data.lastName);
     await this.fillDateOfBirth(data.dateOfBirth);
+    await this.emailInput.click();
     await this.actions.fill(this.emailInput, data.email);
     await this.actions.fill(this.passwordInput, data.password);
     await this.actions.fill(this.confirmPasswordInput, data.confirmPassword);
